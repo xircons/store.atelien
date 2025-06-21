@@ -31,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
                          onerror="this.src='/images/product/default-fallback-image.png'; this.onerror=null;"
                          loading="lazy">
                     <div class="product-info">
-                    <p class="maker">${product.maker || 'N/A'}</p>
                         <h3>${product.name}</h3>
+                        <p class="maker">${product.maker || 'N/A'}</p>
+                        <p class="price">$${Number(product.price).toLocaleString()} USD</p>
                     </div>
                 `;
                 

@@ -41,6 +41,7 @@
 
 .product-info .maker {
     font-size: 0.8rem;
+    font-weight: 300;
     color: rgba(6, 29, 27, 0.9);
     margin-bottom: 0.5rem;
 }
@@ -48,6 +49,8 @@
 .product-info .price {
     font-size: 0.9rem;
     color: rgba(6, 29, 27, 0.9);
+    font-weight: 400;
+    
 }
 
 .footer {

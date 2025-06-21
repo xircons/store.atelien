@@ -28,6 +28,7 @@ router.get('/', (req, res) => {
             price: product.price,
             category: product.category,
             image: product.image,
+            image_hover: product.image_hover,
             maker: product.maker
         }));
         
@@ -39,6 +40,8 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     const productId = req.params.id;
     
+    console.log('=== SERVER DEBUG: Fetching product ID', productId, '===');
+    
     db.query('SELECT * FROM products WHERE id = ?', [productId], (err, results) => {
         if (err) {
             console.error('Error fetching product:', err);
@@ -46,10 +49,15 @@ router.get('/:id', (req, res) => {
         }
         
         if (results.length === 0) {
+            console.log('Product not found in database');
             return res.status(404).json({ error: 'Product not found' });
         }
         
         const product = results[0];
+        
+        console.log('Raw database result:', product);
+        console.log('image_hover from database:', product.image_hover);
+        console.log('image_hover type:', typeof product.image_hover);
         
         // Transform result to match expected format
         const productData = {
@@ -59,9 +67,13 @@ router.get('/:id', (req, res) => {
             price: product.price,
             category: product.category,
             image: product.image,
+            image_hover: product.image_hover,
             maker: product.maker,
             lead_time: product.lead_time
         };
+        
+        console.log('Final product data being sent:', productData);
+        console.log('=== END SERVER DEBUG ===');
         
         res.json(productData);
     });

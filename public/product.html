@@ -63,81 +63,50 @@
             <div class="product-gallery">
                 <div class="gallery-main">
                     <img id="main-image" src="/images/product/default-fallback-image.png" alt="Product Image">
-                </div>
-                <div class="gallery-thumbnails" id="gallery-thumbnails">
-                    <!-- Thumbnails will be populated by JavaScript -->
+                    <img id="hover-image" src="/images/product/default-fallback-image.png" alt="Product Image Hover" class="hover-image">
                 </div>
             </div>
 
             <!-- Product Info -->
             <div class="product-info">
                 <div class="product-header">
-                    <h1 id="product-title">Product Name</h1>
-                    <div class="product-meta">
-                        <span id="product-maker">Maker</span>
-                        <span class="separator">•</span>
-                        <span id="product-designer">Designer</span>
+                    <div>
+                        <h1 id="product-title">Product Name</h1>
+                        <div class="product-meta">
+                            <span id="product-maker">Maker</span>
+                        </div>
                     </div>
-                </div>
-
-                <div class="product-price">
-                    <span id="product-price">$0.00</span>
-                    <span class="currency">USD</span>
-                </div>
-
-                <div class="product-actions">
-                    <button class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
-                    <button class="contact-btn" id="contact-btn">Contact Us</button>
+                    <div class="product-price">
+                        <span id="product-price">$0.00</span>
+                        <span class="currency">USD</span>
+                    </div>
                 </div>
 
                 <div class="product-details">
                     <div class="detail-item">
-                        <span class="label">Lead Time:</span>
-                        <span id="product-lead-time">2-4 Weeks</span>
+                        <span class="label">Lead Time : </span>
+                        <span id="product-lead-time" class="lead-time-value">2-4 Weeks</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Category:</span>
-                        <span id="product-category-display">Category</span>
+                        <span class="label">Category : </span>
+                        <span id="product-category-display" class="lead-time-value">Category</span>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
+                    <div class="quantity-selector">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" id="decrease-btn">-</button>
+                            <input type="number" id="quantity" value="1" min="1" max="99">
+                            <button class="quantity-btn" id="increase-btn">+</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="product-description">
                     <h3>Description</h3>
                     <p id="product-description-text">Product description will be loaded here.</p>
-                </div>
-
-                <div class="product-specifications">
-                    <h3>Specifications</h3>
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">Width</span>
-                            <span class="spec-value" id="spec-width">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Depth</span>
-                            <span class="spec-value" id="spec-depth">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Height</span>
-                            <span class="spec-value" id="spec-height">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Material</span>
-                            <span class="spec-value" id="spec-material">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Year</span>
-                            <span class="spec-value" id="spec-year">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-downloads">
-                    <h3>Downloads</h3>
-                    <div class="download-links">
-                        <a href="#" class="download-link">3D CAD</a>
-                        <a href="#" class="download-link">Tear Sheet</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -146,7 +115,6 @@
         <section class="related-products">
             <h2>Related Products</h2>
             <div class="related-grid" id="related-products">
-                <!-- Related products will be populated by JavaScript -->
             </div>
         </section>
     </main>
