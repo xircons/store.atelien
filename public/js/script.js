@@ -31,18 +31,38 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Toggle search mode
-searchBtn.addEventListener('click', function() {
+// Enhanced search button/input logic
+searchBtn.addEventListener('click', function () {
     if (header.classList.contains('search-mode')) {
-        // Exit search mode
-        header.classList.remove('search-mode');
-        searchInput.value = '';
+        // If already in search mode and input is not empty, perform search
+        const query = searchInput.value.trim();
+        if (query) {
+            window.location.href = `collections.html?search=${encodeURIComponent(query)}`;
+        } else {
+            // If input is empty, just close search mode
+            header.classList.remove('search-mode');
+            searchInput.value = '';
+        }
     } else {
         // Enter search mode
         header.classList.add('search-mode');
         setTimeout(() => {
             searchInput.focus();
         }, 100);
+    }
+});
+
+// Listen for Enter key in search input
+searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query) {
+            window.location.href = `collections.html?search=${encodeURIComponent(query)}`;
+        } else {
+            // If input is empty, just close search mode
+            header.classList.remove('search-mode');
+            searchInput.value = '';
+        }
     }
 });
 

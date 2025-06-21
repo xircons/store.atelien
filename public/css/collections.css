@@ -2,6 +2,7 @@
     max-width: 80%;
     margin: 0 auto;
     margin-top: 12rem;
+    margin-bottom: 8rem;
 }
 
 .products-grid {
@@ -53,19 +54,120 @@
     
 }
 
-.footer {
-    text-align: center;
-    padding: 2rem;
-    background: #FFF;
-    border-top: 1px solid rgba(6, 29, 27, 0.1);
-    margin-top: 2rem;
+/* Search Results Styles */
+#search-results-info {
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(6, 29, 27, 0.1);
 }
 
+.search-results-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
+.search-results-header h2 {
+    font-size: 2rem;
+    font-weight: 400;
+    color: rgba(6, 29, 27, 1);
+    margin: 0;
+}
+
+.search-results-header p {
+    color: rgba(6, 29, 27, 0.8);
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.clear-search-btn {
+    background: rgba(6, 29, 27, 0.1);
+    border: 1px solid rgba(6, 29, 27, 0.2);
+    color: rgba(6, 29, 27, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.clear-search-btn:hover {
+    background: rgba(6, 29, 27, 0.2);
+    color: rgba(6, 29, 27, 1);
+}
+
+/* Remove yellow highlighting - make it more subtle */
+mark {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-weight: inherit;
+}
+
+/* No results styling */
+.no-results-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 6rem 0;
+}
+
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.no-results p {
+    color: rgba(6, 29, 27, 0.7);
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+
+/* Error message styling */
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    color: #721c24;
+    margin: 2rem 0;
+}
+
+.error-message h3 {
+    margin-bottom: 1rem;
+}
+
+.error-message button {
+    background: #721c24;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.error-message button:hover {
+    background: #5a1a1e;
+}
 
 @media (max-width: 1024px) {
     .products-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .search-results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 }
 
@@ -89,10 +191,35 @@
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .search-results-header {
+        text-align: center;
+    }
+    
+    .search-results-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .clear-search-btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
     .products-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .search-results-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .no-results {
+        padding: 2rem 1rem;
+    }
+    
+    .no-results h3 {
+        font-size: 1.1rem;
     }
 }

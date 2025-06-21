@@ -194,6 +194,7 @@ body {
 }
 
 .search-input {
+    margin-top: 0.5rem;
     flex: 1;
     max-width: calc(100% - 7rem);
     background: none;

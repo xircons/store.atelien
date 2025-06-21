@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const collection = params.get('collection') || 'all';
+    const searchQuery = params.get('search');
     const container = document.getElementById('products-container');
     const searchBtn = document.getElementById('searchBtn');
     const searchContainer = document.querySelector('.search-container');
@@ -8,7 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const navMenu = document.querySelector('.nav-menu');
     const navRight = document.querySelector('.nav-right');
 
-    // Fetch products
+    // If there's a search query, let search.js handle it
+    if (searchQuery) {
+        // Search functionality will be handled by search.js
+        return;
+    }
+
+    // Fetch products for collection view (when not searching)
     container.innerHTML = '<p>Loading...</p>';
     fetch(`/api/products?collection=${collection}`)
         .then(res => {
@@ -50,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = '<p>Sorry, we couldn\'t load the products. Please try again later.</p>';
         });
 
-    // Search toggle
+    // Search toggle (only for showing/hiding search input, actual search handled by search.js)
     searchBtn.addEventListener('click', () => {
         searchContainer.style.display = searchContainer.style.display === 'block' ? 'none' : 'block';
     });
