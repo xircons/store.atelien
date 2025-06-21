@@ -32,15 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Signing In...';
         submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
         
         try {
             // Use auth system's login method
-            const result = await window.auth.login(email, password, true);
+            const result = await window.auth.login(email, password, false);
             
             if (result.success) {
                 // Success - redirect to home page
-                showSuccess('Login successful! Redirecting...');
+                showSuccess('Login successful!');
                 setTimeout(() => {
                     window.location.href = '/index.html';
                 }, 1500);
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset button state
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-            submitBtn.classList.remove('loading');
         }
     });
 
@@ -71,6 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
+        errorDiv.style.cssText = `
+            background-color: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #fcc;
+        `;
         
         loginForm.insertBefore(errorDiv, loginForm.firstChild);
         
@@ -90,6 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.textContent = message;
+        successDiv.style.cssText = `
+            background-color: #efe;
+            color: #363;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #cfc;
+        `;
         
         loginForm.insertBefore(successDiv, loginForm.firstChild);
     }

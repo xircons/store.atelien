@@ -80,6 +80,7 @@
 .form-group input:focus {
     outline: none;
     border-color: #2a2a2a;
+    border-bottom-width: 2px;
 }
 
 .form-group input::placeholder {
@@ -125,6 +126,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 1rem;
+    border-radius: 2px;
     letter-spacing: 0.5px;
 }
 
@@ -200,12 +202,14 @@
     margin-bottom: 1rem;
     font-size: clamp(0.8rem, 2vw, 0.9rem);
     border: 1px solid;
+    border-radius: 4px;
     text-align: center;
 }
 
 .error-message {
-    background-color: transparent;
-    border-color: #2a2a2a;
+    background-color: #fee;
+    color: #c33;
+    border-color: #fcc;
 }
 
 .success-message {

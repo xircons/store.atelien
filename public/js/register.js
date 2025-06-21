@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
-        // Validation
+        // Basic validation
         if (!email || !password || !confirmPassword) {
             showError('Please fill in all fields.');
             return;
@@ -28,13 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (password.length < 6) {
-            showError('Password must be at least 6 characters long.');
+        if (password !== confirmPassword) {
+            showError('Passwords do not match.');
             return;
         }
 
-        if (password !== confirmPassword) {
-            showError('Passwords do not match.');
+        if (password.length < 6) {
+            showError('Password must be at least 6 characters long.');
             return;
         }
 
@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Creating Account...';
         submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
 
         try {
             const response = await fetch('/api/auth/register', {
@@ -69,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset button state
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-            submitBtn.classList.remove('loading');
         }
     });
 
@@ -83,9 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
         if (password.length > 0 && password.length < 6) {
-            passwordInput.style.borderColor = '#ff6b6b';
-        } else if (password.length >= 6) {
-            passwordInput.style.borderColor = '#51cf66';
+            passwordInput.style.borderColor = '#c33';
         } else {
             passwordInput.style.borderColor = '#e0e0e0';
         }
@@ -96,9 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
         if (confirmPassword.length > 0 && password !== confirmPassword) {
-            confirmPasswordInput.style.borderColor = '#ff6b6b';
-        } else if (confirmPassword.length > 0 && password === confirmPassword) {
-            confirmPasswordInput.style.borderColor = '#51cf66';
+            confirmPasswordInput.style.borderColor = '#c33';
         } else {
             confirmPasswordInput.style.borderColor = '#e0e0e0';
         }
@@ -112,6 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
+        errorDiv.style.cssText = `
+            background-color: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #fcc;
+        `;
         
         registerForm.insertBefore(errorDiv, registerForm.firstChild);
         
@@ -131,6 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.textContent = message;
+        successDiv.style.cssText = `
+            background-color: #efe;
+            color: #363;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #cfc;
+        `;
         
         registerForm.insertBefore(successDiv, registerForm.firstChild);
     }
@@ -152,4 +164,31 @@ document.addEventListener('DOMContentLoaded', () => {
             input.parentElement.style.transform = 'translateY(0)';
         });
     });
+
+    // Match register content height to image height
+    const registerContent = document.querySelector('.login-content');
+    const registerImage = document.querySelector('.login-image img');
+
+    const setContentHeight = () => {
+        // Only run on desktop layout where the image is visible
+        if (registerContent && registerImage && window.innerWidth > 1024) {
+            const imageHeight = registerImage.offsetHeight;
+            registerContent.style.height = `${imageHeight}px`;
+        } else if (registerContent) {
+            registerContent.style.height = 'auto'; // Reset for smaller screens
+        }
+    };
+
+    if (registerImage) {
+        // Run when the image is loaded
+        registerImage.addEventListener('load', setContentHeight);
+        
+        // If the image is already complete (from cache)
+        if (registerImage.complete) {
+            setContentHeight();
+        }
+
+        // Adjust on window resize
+        window.addEventListener('resize', setContentHeight);
+    }
 }); 

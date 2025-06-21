@@ -401,6 +401,9 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: start;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
 }
 
 .category-item img {
@@ -416,18 +419,6 @@ button:hover {
     font-weight: 400;
     color: rgba(6, 29, 27, 1);
     margin: 0;
-    text-align: center;
-}
-
-.category-item span {
-    font-size: clamp(0.5rem, 1.8vw, 0.7rem);
-    font-weight: 200;
-    color: #000000;
-    background-color: #e0e0e0;
-    padding: 0.01rem 0.2rem;
-    border-radius: 3px;
-    margin-left: 0.6rem;
-    align-items: center;
     text-align: center;
 }
 
