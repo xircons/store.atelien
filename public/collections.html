@@ -9,26 +9,29 @@
 </head>
 <body>
     <header class="header" id="header">
+        <!-- First nav-container-->
         <div class="nav-container">
             <div class="nav-left">
-                <a href="/index.html" class="logo">
-                    <img src="/images/logo/logo.png">
+                <a href="index.html" class="logo">
+                    <img src="images/logo/logo.png">
                 </a>
                 <div class="nav-menu">
-                    <a href="/project.html" class="nav-item">Projects</a>
+                    <a href="project.html" class="nav-item">Projects</a>
                     <a class="nav-item shop-toggle" id="shopToggle">Shop</a>
                 </div>
             </div>
             <div class="nav-right">
-                <a href="/cart.html" class="nav-item">Cart</a>
-                <a href="/login.html" class="nav-item">Login</a>
+                <a href="cart.html" class="nav-item">Cart</a>
+                <a href="login.html" class="nav-item">Login</a>
                 <button class="search-btn" id="searchBtn">Search</button>
             </div>
+            <!-- Search Mode -->
             <div class="search-container">
                 <input type="text" class="search-input" placeholder="Start Typing..." id="searchInput">
             </div>
             <button class="menu-toggle" id="menuToggle">☰</button>
         </div>
+        <!-- Second nav-container-->
         <div class="nav-dropdown-container" id="navDropdown">
             <div class="nav-dropdown">
                 <a href="collections.html?collection=all" class="nav-item">Shop All</a>
@@ -42,7 +45,6 @@
     </header>
 
     <main class="main-content">
-        <h1 id="category-title">Collections</h1>
         <div id="products-container" class="products-grid"></div>
     </main>
 

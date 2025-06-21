@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Product</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+    <header class="header" id="header">
+        <!-- First nav-container-->
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <img src="images/logo/logo.png" alt="Atelien">
+                </a>
+                <div class="nav-menu">
+                    <a href="project.html" class="nav-item">Projects</a>
+                    <a class="nav-item shop-toggle" id="shopToggle">Shop</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="cart.html" class="nav-item">Cart</a>
+                <a href="login.html" class="nav-item">Login</a>
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+            <!-- Search Mode -->
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Start Typing..." id="searchInput">
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+        <!-- Second nav-container-->
+        <div class="nav-dropdown-container" id="navDropdown">
+            <div class="nav-dropdown">
+                <a href="collections.html?collection=all" class="nav-item">Shop All</a>
+                <a href="collections.html?collection=seating" class="nav-item">Seating</a>
+                <a href="collections.html?collection=tables" class="nav-item">Tables</a>
+                <a href="collections.html?collection=lighting" class="nav-item">Lighting</a>
+                <a href="collections.html?collection=storage" class="nav-item">Storage</a>
+                <a href="collections.html?collection=accessories" class="nav-item">Accessories</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="product-page">
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <a href="collections.html?collection=all">Collection</a>
+            <span>/</span>
+            <span id="product-category">Category</span>
+            <span>/</span>
+            <span id="product-name">Product</span>
+        </nav>
+
+        <!-- Product Container -->
+        <div class="product-container">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                <div class="gallery-main">
+                    <img id="main-image" src="/images/product/default-fallback-image.png" alt="Product Image">
+                </div>
+                <div class="gallery-thumbnails" id="gallery-thumbnails">
+                    <!-- Thumbnails will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <div class="product-header">
+                    <h1 id="product-title">Product Name</h1>
+                    <div class="product-meta">
+                        <span id="product-maker">Maker</span>
+                        <span class="separator">•</span>
+                        <span id="product-designer">Designer</span>
+                    </div>
+                </div>
+
+                <div class="product-price">
+                    <span id="product-price">$0.00</span>
+                    <span class="currency">USD</span>
+                </div>
+
+                <div class="product-actions">
+                    <button class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
+                    <button class="contact-btn" id="contact-btn">Contact Us</button>
+                </div>
+
+                <div class="product-details">
+                    <div class="detail-item">
+                        <span class="label">Lead Time:</span>
+                        <span id="product-lead-time">2-4 Weeks</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Category:</span>
+                        <span id="product-category-display">Category</span>
+                    </div>
+                </div>
+
+                <div class="product-description">
+                    <h3>Description</h3>
+                    <p id="product-description-text">Product description will be loaded here.</p>
+                </div>
+
+                <div class="product-specifications">
+                    <h3>Specifications</h3>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Width</span>
+                            <span class="spec-value" id="spec-width">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Depth</span>
+                            <span class="spec-value" id="spec-depth">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Height</span>
+                            <span class="spec-value" id="spec-height">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Material</span>
+                            <span class="spec-value" id="spec-material">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Year</span>
+                            <span class="spec-value" id="spec-year">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-downloads">
+                    <h3>Downloads</h3>
+                    <div class="download-links">
+                        <a href="#" class="download-link">3D CAD</a>
+                        <a href="#" class="download-link">Tear Sheet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <section class="related-products">
+            <h2>Related Products</h2>
+            <div class="related-grid" id="related-products">
+                <!-- Related products will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Stories</a></li>
+                        <li><a href="#">Architecture</a></li>
+                        <li><a href="#">Interiors</a></li>
+                        <li><a href="#">Furniture</a></li>
+                        <li><a href="#">Lighting</a></li>
+                        <li><a href="#">Objects</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Store</h3>
+                    <ul>
+                        <li><a href="collections.html?collection=seating">Seating</a></li>
+                        <li><a href="collections.html?collection=tables">Tables</a></li>
+                        <li><a href="collections.html?collection=lighting">Lighting</a></li>
+                        <li><a href="collections.html?collection=storage">Storage</a></li>
+                        <li><a href="collections.html?collection=accessories">Accessories</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Submit</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="#">Pinterest</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Tumblr</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">TikTok</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section newsletter">
+                    <h3>Newsletter</h3>
+                    <form>
+                        <input type="email" placeholder="Enter your email" required>
+                        <button type="submit">Send</button>
+                    </form>
+                    <p>©2025 Atelien. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+    <script src="/js/product.js"></script>
+</body>
+</html> 

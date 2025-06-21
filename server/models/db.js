@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 
 const db = mysql.createConnection({
-    host: 'localhost',      // หรือ host ของคุณ
-    user: 'root',           // เปลี่ยนถ้ามี user อื่น
-    password: '',           // ใส่รหัสผ่านของ MySQL
-    database: 'store.atelien'
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'store.atelien'  // Your original database name
 });
 
 db.connect((err) => {

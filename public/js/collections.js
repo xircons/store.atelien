@@ -1,18 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const collection = params.get('collection') || 'all';
+    const container = document.getElementById('products-container');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchContainer = document.querySelector('.search-container');
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const navRight = document.querySelector('.nav-right');
 
-    // ตั้งชื่อหัวเรื่อง (category title)
-    const titleEl = document.getElementById('category-title');
-    titleEl.textContent = capitalize(collection);
-
-    // ดึงข้อมูลสินค้าจาก API
+    // Fetch products
+    container.innerHTML = '<p>Loading...</p>';
     fetch(`/api/products?collection=${collection}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
         .then(products => {
-            const container = document.getElementById('products-container');
-            container.innerHTML = ''; // ล้างของเดิม
-
+            container.innerHTML = '';
             if (products.length === 0) {
                 container.innerHTML = '<p>No products found in this collection.</p>';
                 return;
@@ -21,26 +25,50 @@ document.addEventListener('DOMContentLoaded', () => {
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
-
+                card.style.cursor = 'pointer';
                 card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}"
-                         onerror="this.onerror=null;this.src='/images/fallback.jpg';"
-                         loading="lazy" />
-                    <h3>${product.name}</h3>
-                    <p>Price: ${product.price.toLocaleString()} Baht</p>
+                    <img src="${product.image || '/images/product/default-fallback-image.png'}" alt="${product.name}"
+                         onerror="this.src='/images/product/default-fallback-image.png'; this.onerror=null;"
+                         loading="lazy">
+                    <div class="product-info">
+                    <p class="maker">${product.maker || 'N/A'}</p>
+                        <h3>${product.name}</h3>
+                    </div>
                 `;
-
+                
+                // Add click event to navigate to product detail page
+                card.addEventListener('click', () => {
+                    window.location.href = `product.html?product=${product.id}`;
+                });
+                
                 container.appendChild(card);
             });
         })
         .catch(error => {
             console.error('Error fetching products:', error);
-            document.getElementById('products-container').innerHTML = '<p>Failed to load products.</p>';
+            container.innerHTML = '<p>Sorry, we couldn\'t load the products. Please try again later.</p>';
         });
+
+    // Search toggle
+    searchBtn.addEventListener('click', () => {
+        searchContainer.style.display = searchContainer.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Mobile menu toggle
+    menuToggle.addEventListener('click', () => {
+        navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        navRight.style.display = navRight.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    // Close search when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchBtn.contains(e.target) && !searchContainer.contains(e.target)) {
+            searchContainer.style.display = 'none';
+        }
+    });
 });
 
-// ช่วยทำให้ตัวอักษรแรกเป็นพิมพ์ใหญ่
 function capitalize(str) {
-    if (!str) return '';
+    if (!str || str === 'all') return 'All Collections';
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
