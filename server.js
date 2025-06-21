@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 
 // Static file serving
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '.')));
 
 // API Route
 const productRoutes = require('./routes/products');

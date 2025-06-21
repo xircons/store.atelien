@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/db'); // เชื่อมต่อ MySQL
+const db = require('./models/db'); // เชื่อมต่อ MySQL
 
 router.get('/', (req, res) => {
     const collection = req.query.collection || 'all';
