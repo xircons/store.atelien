@@ -21,7 +21,10 @@ app.use((req, res, next) => {
 
 // API Routes
 const productRoutes = require('./routes/products');
+const authRoutes = require('./routes/auth');
+
 app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;

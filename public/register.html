@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
-    <title>Atelien Store — Product</title>
+    <title>Atelien Store — Register</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
     <header class="header" id="header">
@@ -45,78 +45,39 @@
         </div>
     </header>
 
-    <main class="product-page">
-        <!-- Breadcrumb Navigation -->
-        <nav class="breadcrumb">
-            <a href="index.html">Home</a>
-            <span>/</span>
-            <a href="collections.html?collection=all">Collection</a>
-            <span>/</span>
-            <span id="product-category">Category</span>
-            <span>/</span>
-            <span id="product-name">Product</span>
-        </nav>
-
-        <!-- Product Container -->
-        <div class="product-container">
-            <!-- Product Gallery -->
-            <div class="product-gallery">
-                <div class="gallery-main">
-                    <img id="main-image" src="/images/product/default-fallback-image.png" alt="Product Image">
-                    <img id="hover-image" src="/images/product/default-fallback-image.png" alt="Product Image Hover" class="hover-image">
+    <main class="login-page">
+        <div class="login-container">
+            <div class="login-content">
+                <div class="login-header">
+                    <h1>Create Account</h1>
+                    <p>Join Atelien Stories</p>
+                </div>
+                
+                <form class="login-form" id="registerForm">
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">Register stories</button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Already have an account? <a href="login.html">Sign in</a></p>
                 </div>
             </div>
-
-            <!-- Product Info -->
-            <div class="product-info">
-                <div class="product-header">
-                    <div>
-                        <h1 id="product-title">Product Name</h1>
-                        <div class="product-meta">
-                            <span id="product-maker">Maker</span>
-                        </div>
-                    </div>
-                    <div class="product-price">
-                        <span id="product-price">$0.00</span>
-                        <span class="currency">USD</span>
-                    </div>
-                </div>
-
-                <div class="product-details">
-                    <div class="detail-item">
-                        <span class="label">Lead Time : </span>
-                        <span id="product-lead-time" class="lead-time-value">2-4 Weeks</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Category : </span>
-                        <span id="product-category-display" class="lead-time-value">Category</span>
-                    </div>
-                </div>
-
-                <div class="product-actions">
-                    <button class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
-                    <div class="quantity-selector">
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" id="decrease-btn">-</button>
-                            <input type="number" id="quantity" value="1" min="1" max="99">
-                            <button class="quantity-btn" id="increase-btn">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-description">
-                    <h3>Description</h3>
-                    <p id="product-description-text">Product description will be loaded here.</p>
-                </div>
+            
+            <div class="login-image">
+                <img src="https://store.leibal.com/cdn/shop/files/beam-desk-3.jpg?crop=center&height=2048&v=1728424349&width=2048" alt="Atelien Collection">
             </div>
         </div>
-
-        <!-- Related Products -->
-        <section class="related-products">
-            <h2>Related Products</h2>
-            <div class="related-grid" id="related-products">
-            </div>
-        </section>
     </main>
 
     <!-- Footer -->
@@ -180,6 +141,6 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/script.js"></script>
-    <script src="/js/product.js"></script>
+    <script src="/js/register.js"></script>
 </body>
 </html> 

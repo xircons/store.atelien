@@ -409,6 +409,12 @@ window.addEventListener('resize', () => {
 });
 
 function addToCart(productId) {
+    // Check if user is logged in
+    if (!window.auth || !window.auth.isAuthenticated()) {
+        window.auth.showLoginRequired();
+        return;
+    }
+    
     const quantity = parseInt(document.getElementById('quantity').value) || 1;
     // TODO: Implement add to cart functionality
     alert(`Added ${quantity} item(s) to cart! (Product ID: ${productId})`);
