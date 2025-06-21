@@ -1,0 +1,24 @@
+store.atelien/
+├── public/
+│   ├── index.html
+│   ├── collections.html
+│   ├── css/
+│   │   ├── style.css
+│   │   ├── collections.css
+│   ├── js/
+│   │   ├── script.js
+│   ├── images/
+│   │   ├── logo/
+│   │   │   ├── logo.png
+│   │   ├── product/
+│   │   │   ├── chair.jpg
+│   │   │   ├── table.jpg
+│   │   │   ├── light.jpg
+│   │   │   ├── shelf.jpg
+│   │   │   ├── vase.jpg
+├── server/
+│   ├── controllers/
+│   ├── models/
+│   │   ├── db.js
+│   ├── routes/
+│   ├── server.js

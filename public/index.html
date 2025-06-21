@@ -9,7 +9,7 @@
 </head>
 <body>
     <header class="header" id="header">
-      <!-- First nav-container-->
+        <!-- First nav-container-->
         <div class="nav-container">
             <div class="nav-left">
                 <a href="index.html" class="logo">
@@ -17,7 +17,7 @@
                 </a>
                 <div class="nav-menu">
                     <a href="project.html" class="nav-item">Projects</a>
-                    <a href="shop.html" class="nav-item">Shop</a>
+                    <a class="nav-item shop-toggle" id="shopToggle">Shop</a>
                 </div>
             </div>
             <div class="nav-right">
@@ -32,14 +32,14 @@
             <button class="menu-toggle" id="menuToggle">☰</button>
         </div>
         <!-- Second nav-container-->
-        <div class="nav-dropdown-container">
+        <div class="nav-dropdown-container" id="navDropdown">
             <div class="nav-dropdown">
-                <a href="cart.html" class="nav-item">Shop All</a>
-                <a href="login.html" class="nav-item">Seating</a>
-                <a href="login.html" class="nav-item">Tables</a>
-                <a href="login.html" class="nav-item">Lighting</a>
-                <a href="login.html" class="nav-item">Storage</a>
-                <a href="login.html" class="nav-item">Accessories</a>
+                <a href="collections.html?collection=all" class="nav-item">Shop All</a>
+                <a href="collections.html?collection=seating" class="nav-item">Seating</a>
+                <a href="collections.html?collection=tables" class="nav-item">Tables</a>
+                <a href="collections.html?collection=lighting" class="nav-item">Lighting</a>
+                <a href="collections.html?collection=storage" class="nav-item">Storage</a>
+                <a href="collections.html?collection=accessories" class="nav-item">Accessories</a>
             </div>
         </div>
     </header>
@@ -190,6 +190,6 @@
         </div>
     </footer>
 
-    <script src="/public/js/script.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>

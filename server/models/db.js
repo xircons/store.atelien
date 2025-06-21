@@ -1,15 +1,18 @@
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'store.atelien'
+const db = mysql.createConnection({
+    host: 'localhost',      // หรือ host ของคุณ
+    user: 'root',           // เปลี่ยนถ้ามี user อื่น
+    password: '',           // ใส่รหัสผ่านของ MySQL
+    database: 'store.atelien'
 });
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to MySQL database!');
+db.connect((err) => {
+    if (err) {
+        console.error('❌ Database connection failed:', err.stack);
+        return;
+    }
+    console.log('✅ Connected to MySQL as id', db.threadId);
 });
 
-module.exports = connection;
+module.exports = db;

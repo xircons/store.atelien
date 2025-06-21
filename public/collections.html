@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelien Store — Collections</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/collections.css">
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="/index.html" class="logo">
+                    <img src="/images/logo/logo.png">
+                </a>
+                <div class="nav-menu">
+                    <a href="/project.html" class="nav-item">Projects</a>
+                    <a class="nav-item shop-toggle" id="shopToggle">Shop</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/cart.html" class="nav-item">Cart</a>
+                <a href="/login.html" class="nav-item">Login</a>
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Start Typing..." id="searchInput">
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+        <div class="nav-dropdown-container" id="navDropdown">
+            <div class="nav-dropdown">
+                <a href="collections.html?collection=all" class="nav-item">Shop All</a>
+                <a href="collections.html?collection=seating" class="nav-item">Seating</a>
+                <a href="collections.html?collection=tables" class="nav-item">Tables</a>
+                <a href="collections.html?collection=lighting" class="nav-item">Lighting</a>
+                <a href="collections.html?collection=storage" class="nav-item">Storage</a>
+                <a href="collections.html?collection=accessories" class="nav-item">Accessories</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 id="category-title">Collections</h1>
+        <div id="products-container" class="products-grid"></div>
+    </main>
+
+    <script src="/js/script.js"></script>
+    <script src="/js/collections.js"></script>
+</body>
+</html>
