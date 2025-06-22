@@ -67,7 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listeners for buttons
     if (elements.addToCartBtn) {
-        elements.addToCartBtn.addEventListener('click', () => addToCart(productId));
+        elements.addToCartBtn.addEventListener('click', () => {
+            const quantityInput = document.getElementById('quantity');
+            const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
+            const productName = document.getElementById('product-title')?.textContent || 'Product';
+            addToCart(productId, productName, quantity);
+        });
     }
 
     // Initialize quantity controls
@@ -408,16 +413,72 @@ window.addEventListener('resize', () => {
     }, 250); // Debounce resize events
 });
 
-function addToCart(productId) {
-    // Check if user is logged in
-    if (!window.auth || !window.auth.isAuthenticated()) {
-        window.auth.showLoginRequired();
-        return;
+function addToCart(productId, productName, quantity) {
+    fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include', // Include cookies in request
+        body: JSON.stringify({ productId, quantity })
+    })
+    .then(res => {
+        if (!res.ok) {
+            if (res.status === 401) {
+                // User not authenticated, show login prompt
+                if (window.auth && window.auth.showLoginRequired) {
+                    window.auth.showLoginRequired();
+                } else {
+                    window.location.href = '/login.html';
+                }
+                // Return a promise that never resolves to stop the chain
+                return new Promise(() => {}); 
+            }
+            throw new Error('Failed to add item to cart');
+        }
+        return res.json();
+    })
+    .then(data => {
+        // data.items now contains the updated cart
+        if (data && data.items) {
+            showCartAlert(`${productName} added to cart`);
+            console.log('Cart updated:', data.items);
+        }
+    })
+    .catch(error => {
+        console.error('Error adding to cart:', error);
+        showCartAlert('Failed to add item to cart');
+    });
+}
+
+function showCartAlert(message) {
+    // Create alert element if it doesn't exist
+    let alert = document.getElementById('cartAlert');
+    if (!alert) {
+        alert = document.createElement('div');
+        alert.id = 'cartAlert';
+        alert.className = 'cart-alert';
+        alert.innerHTML = `
+            <div class="alert-content">
+                <span class="alert-message">${message}</span>
+                <button class="alert-close" onclick="this.parentElement.parentElement.classList.remove('show')">×</button>
+            </div>
+        `;
+        document.body.appendChild(alert);
+    } else {
+        const alertMessage = alert.querySelector('.alert-message');
+        if (alertMessage) {
+            alertMessage.textContent = message;
+        }
     }
     
-    const quantity = parseInt(document.getElementById('quantity').value) || 1;
-    // TODO: Implement add to cart functionality
-    alert(`Added ${quantity} item(s) to cart! (Product ID: ${productId})`);
+    // Show alert
+    alert.classList.add('show');
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        alert.classList.remove('show');
+    }, 3000);
 }
 
 function showError(message) {

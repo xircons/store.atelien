@@ -1,3 +1,8 @@
+// Initialize authentication system
+if (typeof Auth !== 'undefined' && !window.auth) {
+    window.auth = new Auth();
+}
+
 const shopToggle = document.getElementById('shopToggle');
 const navDropdown = document.getElementById('navDropdown');
 const searchBtn = document.getElementById('searchBtn');

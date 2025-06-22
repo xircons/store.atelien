@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Cart</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <header class="header" id="header">
+        <!-- First nav-container-->
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <img src="images/logo/logo.png">
+                </a>
+                <div class="nav-menu">
+                    <a href="project.html" class="nav-item">Projects</a>
+                    <a class="nav-item shop-toggle" id="shopToggle">Shop</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="cart.html" class="nav-item active">Cart</a>
+                <a href="login.html" class="nav-item">Login</a>
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+            <!-- Search Mode -->
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Start Typing..." id="searchInput">
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+        <!-- Second nav-container-->
+        <div class="nav-dropdown-container" id="navDropdown">
+            <div class="nav-dropdown">
+                <a href="collections.html?collection=all" class="nav-item">Shop All</a>
+                <a href="collections.html?collection=seating" class="nav-item">Seating</a>
+                <a href="collections.html?collection=tables" class="nav-item">Tables</a>
+                <a href="collections.html?collection=lighting" class="nav-item">Lighting</a>
+                <a href="collections.html?collection=storage" class="nav-item">Storage</a>
+                <a href="collections.html?collection=accessories" class="nav-item">Accessories</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="cart-container">
+            <div class="cart-header page-header">
+                <h1>My Cart</h1>
+                <div class="cart-count sub-heading" id="cartCount">0 Items</div>
+            </div>
+
+            <div class="cart-content">
+                <div class="cart-items-section">
+                    <div class="cart-items-header">
+                        <span class="header-product">Product</span>
+                        <span class="header-price">Price</span>
+                        <span class="header-quantity">Quantity</span>
+                    </div>
+                    <div class="cart-items" id="cartItems">
+                        <!-- Cart items will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <div class="cart-summary" id="cartSummary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Calculated on Next Step</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <span>Added on Next Step</span>
+                    </div>
+                    <button class="checkout-btn" id="checkoutBtn" disabled>Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mini Alert Box for Cart Updates -->
+    <div class="cart-alert" id="cartAlert">
+        <div class="alert-content">
+            <span class="alert-message" id="alertMessage"></span>
+            <button class="alert-close" id="alertClose">×</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Stories</a></li>
+                        <li><a href="#">Architecture</a></li>
+                        <li><a href="#">Interiors</a></li>
+                        <li><a href="#">Furniture</a></li>
+                        <li><a href="#">Lighting</a></li>
+                        <li><a href="#">Objects</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Store</h3>
+                    <ul>
+                        <li><a href="collections.html?collection=seating">Seating</a></li>
+                        <li><a href="collections.html?collection=tables">Tables</a></li>
+                        <li><a href="collections.html?collection=lighting">Lighting</a></li>
+                        <li><a href="collections.html?collection=storage">Storage</a></li>
+                        <li><a href="collections.html?collection=accessories">Accessories</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Submit</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="#">Pinterest</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Tumblr</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">TikTok</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section newsletter">
+                    <h3>Newsletter</h3>
+                    <form>
+                        <input type="email" required>
+                        <button type="submit">Send</button>
+                    </form>
+                    <p>©2025 Atelien. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/cart.js"></script>
+</body>
+</html> 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -66,7 +67,7 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, remember } = req.body;
 
         // Validation
         if (!email || !password) {
@@ -97,6 +98,17 @@ router.post('/login', async (req, res) => {
                     return res.status(401).json({ error: 'Invalid email or password' });
                 }
 
+                // Generate JWT token
+                const token = jwt.sign(
+                    { 
+                        id: user.id, 
+                        email: user.email, 
+                        role: user.role 
+                    },
+                    process.env.JWT_SECRET || 'your-secret-key',
+                    { expiresIn: remember ? '30d' : '24h' }
+                );
+
                 // Create user session data (without password)
                 const userData = {
                     id: user.id,
@@ -106,10 +118,25 @@ router.post('/login', async (req, res) => {
                     created_at: user.created_at
                 };
 
+                // Set HTTP-only cookies for authentication
+                const cookieOptions = {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production', // Use secure in production
+                    sameSite: 'lax',
+                    maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 30 days or 24 hours
+                };
+
+                res.cookie('authToken', token, cookieOptions);
+                res.cookie('userEmail', user.email, cookieOptions);
+                res.cookie('userId', user.id.toString(), cookieOptions);
+                res.cookie('username', user.username || '', cookieOptions);
+                res.cookie('isLoggedIn', 'true', cookieOptions);
+
                 res.json({
                     success: true,
                     message: 'Login successful',
-                    user: userData
+                    user: userData,
+                    token: token // Still return token for backward compatibility
                 });
             });
         });
@@ -117,6 +144,66 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Logout user
+router.post('/logout', (req, res) => {
+    // Clear all authentication cookies
+    res.clearCookie('authToken');
+    res.clearCookie('userEmail');
+    res.clearCookie('userId');
+    res.clearCookie('username');
+    res.clearCookie('isLoggedIn');
+    
+    res.json({
+        success: true,
+        message: 'Logout successful'
+    });
+});
+
+// Check authentication status
+router.get('/status', (req, res) => {
+    const token = req.cookies.authToken;
+    const userEmail = req.cookies.userEmail;
+    const userId = req.cookies.userId;
+    const username = req.cookies.username;
+    
+    if (token && userEmail && userId) {
+        try {
+            // Verify JWT token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+            
+            res.json({
+                success: true,
+                isLoggedIn: true,
+                user: {
+                    id: userId,
+                    email: userEmail,
+                    username: username || null,
+                    role: decoded.role
+                }
+            });
+        } catch (error) {
+            // Token is invalid, clear cookies
+            res.clearCookie('authToken');
+            res.clearCookie('userEmail');
+            res.clearCookie('userId');
+            res.clearCookie('username');
+            res.clearCookie('isLoggedIn');
+            
+            res.json({
+                success: true,
+                isLoggedIn: false,
+                user: null
+            });
+        }
+    } else {
+        res.json({
+            success: true,
+            isLoggedIn: false,
+            user: null
+        });
     }
 });
 

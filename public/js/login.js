@@ -1,13 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
 
-    // Check if user is already logged in
-    if (window.auth && window.auth.isAuthenticated()) {
-        window.location.href = '/index.html';
+    // Check if user is already logged in and redirect if necessary
+    if (window.auth) {
+        window.auth.initPromise.then(() => {
+            if (window.auth.isAuthenticated() && window.location.pathname.includes('login.html')) {
+                window.location.href = '/index.html';
+            }
+        });
+    }
+
+    // If there's no login form on this page, don't proceed.
+    if (!loginForm) {
         return;
     }
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const rememberCheckbox = document.getElementById('remember');
 
     // Form submission handler
     loginForm.addEventListener('submit', async (e) => {
@@ -15,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const email = emailInput.value.trim();
         const password = passwordInput.value;
+        const remember = rememberCheckbox.checked;
         
         // Basic validation
         if (!email || !password) {
@@ -35,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // Use auth system's login method
-            const result = await window.auth.login(email, password, false);
+            const result = await window.auth.login(email, password, remember);
             
             if (result.success) {
                 // Success - redirect to home page

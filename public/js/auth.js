@@ -3,30 +3,34 @@ class Auth {
     constructor() {
         this.isLoggedIn = false;
         this.user = null;
-        this.init();
+        this.loginRequiredHandlers = new Map();
+        this.initPromise = this.init();
     }
 
-    init() {
-        // Check if user is logged in on page load
-        this.checkLoginStatus();
+    async init() {
+        await this.checkLoginStatus();
         this.updateUI();
     }
 
-    // Check if user is logged in
-    checkLoginStatus() {
-        const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-        const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
-        const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
-        const username = localStorage.getItem('username') || sessionStorage.getItem('username');
-        
-        if (token && userEmail && userId) {
-            this.isLoggedIn = true;
-            this.user = { 
-                id: userId,
-                email: userEmail, 
-                username: username 
-            };
-        } else {
+    // Check if user is logged in by calling server
+    async checkLoginStatus() {
+        try {
+            const response = await fetch('/api/auth/status', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in request
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.isLoggedIn) {
+                this.isLoggedIn = true;
+                this.user = data.user;
+            } else {
+                this.isLoggedIn = false;
+                this.user = null;
+            }
+        } catch (error) {
+            console.error('Error checking login status:', error);
             this.isLoggedIn = false;
             this.user = null;
         }
@@ -40,21 +44,23 @@ class Auth {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                credentials: 'include', // Include cookies in request
+                body: JSON.stringify({ email, password, remember })
             });
 
             const data = await response.json();
 
             if (data.success) {
-                // Store authentication data
+                // Store authentication data in cookies (handled by server)
+                // Also store in localStorage/sessionStorage for backward compatibility
                 if (remember) {
-                    localStorage.setItem('authToken', 'token_' + Date.now());
+                    localStorage.setItem('authToken', data.token);
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('userId', data.user.id);
                     localStorage.setItem('username', data.user.username || '');
                     localStorage.setItem('isLoggedIn', 'true');
                 } else {
-                    sessionStorage.setItem('authToken', 'token_' + Date.now());
+                    sessionStorage.setItem('authToken', data.token);
                     sessionStorage.setItem('userEmail', data.user.email);
                     sessionStorage.setItem('userId', data.user.id);
                     sessionStorage.setItem('username', data.user.username || '');
@@ -76,8 +82,18 @@ class Auth {
     }
 
     // Logout user
-    logout() {
-        // Clear all auth data
+    async logout() {
+        try {
+            // Call server logout endpoint to clear cookies
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+
+        // Clear all auth data from localStorage/sessionStorage
         localStorage.removeItem('authToken');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userId');
@@ -208,25 +224,45 @@ class Auth {
 
     // Enable add to cart buttons
     enableAddToCartButtons() {
-        const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
-        addToCartBtns.forEach(btn => {
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            btn.style.cursor = 'pointer';
+        const buttons = document.querySelectorAll('.add-to-cart-btn, #add-to-cart-btn');
+        buttons.forEach(button => {
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+
+            // Remove the 'login required' click listener if it was added
+            const handler = this.loginRequiredHandlers.get(button);
+            if (handler) {
+                button.removeEventListener('click', handler, true);
+                this.loginRequiredHandlers.delete(button);
+            }
         });
     }
 
     // Disable add to cart buttons
     disableAddToCartButtons() {
-        const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
-        addToCartBtns.forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-            btn.style.cursor = 'not-allowed';
-            btn.onclick = (e) => {
+        const buttons = document.querySelectorAll('.add-to-cart-btn, #add-to-cart-btn');
+        buttons.forEach(button => {
+            button.disabled = true;
+            button.style.opacity = '0.5';
+            button.style.cursor = 'not-allowed';
+            
+            // Remove any old listener before adding a new one
+            let handler = this.loginRequiredHandlers.get(button);
+            if (handler) {
+                button.removeEventListener('click', handler, true);
+            }
+
+            // Define, store, and add the new "blocker" listener
+            handler = (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.showLoginRequired();
             };
+            
+            this.loginRequiredHandlers.set(button, handler);
+            // Use capture phase to ensure this listener runs before any others
+            button.addEventListener('click', handler, true);
         });
     }
 

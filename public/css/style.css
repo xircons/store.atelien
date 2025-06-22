@@ -222,6 +222,79 @@ body {
     left: 1rem;
 }
 
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: rgba(6, 29, 27, 1);
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.page-header .sub-heading {
+    color: rgba(6, 29, 27, 0.7);
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+/* ============================================= */
+/*              Cart Alert Styles                */
+/* ============================================= */
+.cart-alert {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #2a2a2a;
+    color: white;
+    padding: 1rem 3rem;
+    z-index: 1000;
+    transform: translateX(110%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s;
+    max-width: 1000px;
+}
+
+.cart-alert.show {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.alert-message {
+    font-size: 0.9rem;
+    font-weight: 400;
+    white-space: nowrap;
+    flex-grow: 0;
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .nav-dropdown {

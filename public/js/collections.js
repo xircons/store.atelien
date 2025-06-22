@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const collection = params.get('collection') || 'all';
     const searchQuery = params.get('search');
     const container = document.getElementById('products-container');
+    const searchResultsInfo = document.getElementById('search-results-info');
     const searchBtn = document.getElementById('searchBtn');
     const searchContainer = document.querySelector('.search-container');
     const menuToggle = document.getElementById('menuToggle');
@@ -15,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Display collection header
+    displayCollectionHeader(collection);
+
     // Fetch products for collection view (when not searching)
     container.innerHTML = '<p>Loading...</p>';
     fetch(`/api/products?collection=${collection}`)
@@ -24,8 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(products => {
             container.innerHTML = '';
+            
+            // Update search results info with collection name and product count
+            if (searchResultsInfo) {
+                const collectionName = getCollectionDisplayName(collection);
+                searchResultsInfo.innerHTML = `
+                    <div class="collection-header page-header">
+                        <h1>${collectionName}</h1>
+                        <p class="product-count sub-heading">${products.length} product${products.length !== 1 ? 's' : ''} found</p>
+                    </div>
+                `;
+            }
+
             if (products.length === 0) {
-                container.innerHTML = '<p>No products found in this collection.</p>';
+                container.innerHTML = '<p class="no-products">No products found in this collection.</p>';
                 return;
             }
 
@@ -75,6 +91,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function getCollectionDisplayName(collection) {
+    const collectionNames = {
+        'all': 'Shop All',
+        'seating': 'Seating',
+        'tables': 'Tables',
+        'lighting': 'Lighting',
+        'storage': 'Storage',
+        'accessories': 'Accessories'
+    };
+    return collectionNames[collection] || 'All Collections';
+}
+
+function displayCollectionHeader(collection) {
+    const collectionName = getCollectionDisplayName(collection);
+    const searchResultsInfo = document.getElementById('search-results-info');
+    
+    if (searchResultsInfo) {
+        searchResultsInfo.innerHTML = `
+            <div class="collection-header page-header">
+                <h1>${collectionName}</h1>
+                <p class="product-count sub-heading">Loading...</p>
+            </div>
+        `;
+    }
+}
 
 function capitalize(str) {
     if (!str || str === 'all') return 'All Collections';
