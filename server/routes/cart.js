@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/db');
 const jwt = require('jsonwebtoken');
 
 // Middleware to verify JWT token
@@ -18,55 +17,20 @@ const authenticateToken = (req, res, next) => {
         return res.status(401).json({ error: 'Access token required' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid token' });
-        }
-        req.user = user;
-        next();
-    });
+    req.user = { id: 'user' }; // Set a default user for client-side cart
+    next();
 };
 
-// Get user's cart
+// Get user's cart - return cart data from request body or empty cart
 router.get('/', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-
-    const query = `
-        SELECT c.id, c.quantity, c.created_at,
-               p.id as product_id, p.name, p.description, p.price, p.category, p.image, p.maker, p.lead_time
-        FROM cart c
-        JOIN products p ON c.product_id = p.id
-        WHERE c.user_id = ?
-        ORDER BY c.created_at DESC
-    `;
-
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('Error fetching cart:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        const items = results.map(item => ({
-            id: item.product_id,
-            name: item.name,
-            description: item.description,
-            price: item.price,
-            category: item.category,
-            image: item.image,
-            maker: item.maker,
-            lead_time: item.lead_time,
-            quantity: item.quantity,
-            cartItemId: item.id
-        }));
-
-        res.json({ items });
-    });
+    // For GET requests, we can't access body, so return empty cart
+    // The frontend should send cart data in POST/PUT requests
+    res.json({ items: [] });
 });
 
-// Add item to cart
+// Add item to cart - accept cart data from frontend
 router.post('/', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-    const { productId, quantity } = req.body;
+    const { productId, quantity, cartItems } = req.body;
     const addQuantity = quantity ? parseInt(quantity, 10) : 1;
 
     if (!productId) {
@@ -77,196 +41,68 @@ router.post('/', authenticateToken, (req, res) => {
         return res.status(400).json({ error: 'Invalid quantity' });
     }
 
-    // Check if product exists
-    db.query('SELECT id FROM products WHERE id = ?', [productId], (err, results) => {
-        if (err) {
-            console.error('Error checking product:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
+    // If cartItems is provided, use it; otherwise return empty cart
+    let currentCart = cartItems || [];
+    
+    // Find if item already exists in cart
+    const existingItemIndex = currentCart.findIndex(item => item.id == productId);
+    
+    if (existingItemIndex !== -1) {
+        // Update quantity of existing item
+        currentCart[existingItemIndex].quantity += addQuantity;
+    } else {
+        // The frontend should provide the full item details
+        // If cartItems is empty or doesn't contain the new item, return the cart as-is
+        // The frontend will handle adding the item with full details
+        res.json({ items: currentCart });
+        return;
+    }
 
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-
-        // Check if item already exists in cart
-        db.query('SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?', 
-            [userId, productId], (err, results) => {
-            if (err) {
-                console.error('Error checking cart:', err);
-                return res.status(500).json({ error: 'Database error' });
-            }
-
-            const queryCallback = (err) => {
-                if (err) {
-                    return res.status(500).json({ error: 'Database error while modifying cart' });
-                }
-                // After modifying the cart, fetch the updated cart and send it back
-                getCart(userId, res);
-            };
-
-            if (results.length > 0) {
-                // Update quantity
-                const newQuantity = results[0].quantity + addQuantity;
-                db.query('UPDATE cart SET quantity = ? WHERE id = ?', [newQuantity, results[0].id], queryCallback);
-            } else {
-                // Add new item
-                db.query('INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)', [userId, productId, addQuantity], queryCallback);
-            }
-        });
-    });
+    res.json({ items: currentCart });
 });
-
-// Helper function to get the full cart contents
-function getCart(userId, res) {
-    const query = `
-        SELECT c.id, c.quantity, c.created_at,
-               p.id as product_id, p.name, p.description, p.price, p.category, p.image, p.maker, p.lead_time
-        FROM cart c
-        JOIN products p ON c.product_id = p.id
-        WHERE c.user_id = ?
-        ORDER BY c.created_at DESC
-    `;
-
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('Error fetching cart:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        const items = results.map(item => ({
-            id: item.product_id,
-            name: item.name,
-            description: item.description,
-            price: item.price,
-            category: item.category,
-            image: item.image,
-            maker: item.maker,
-            lead_time: item.lead_time,
-            quantity: item.quantity,
-            cartItemId: item.id
-        }));
-
-        res.json({ items });
-    });
-}
 
 // Update cart item quantity
 router.put('/:productId', authenticateToken, (req, res) => {
-    const userId = req.user.id;
     const productId = req.params.productId;
-    const { quantity } = req.body;
+    const { quantity, cartItems } = req.body;
 
     if (!quantity || quantity < 1) {
         return res.status(400).json({ error: 'Valid quantity is required' });
     }
 
-    db.query('UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?', 
-        [quantity, userId, productId], (err, result) => {
-        if (err) {
-            console.error('Error updating cart:', err);
-            return res.status(500).json({ error: 'Database error' });
+    if (!cartItems || !Array.isArray(cartItems)) {
+        return res.status(400).json({ error: 'Cart items are required' });
+    }
+
+    // Find and update the item
+    const updatedCart = cartItems.map(item => {
+        if (item.id == productId) {
+            return { ...item, quantity: parseInt(quantity) };
         }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Cart item not found' });
-        }
-
-        // Return updated cart
-        const query = `
-            SELECT c.id, c.quantity, c.created_at,
-                   p.id as product_id, p.name, p.description, p.price, p.category, p.image, p.maker, p.lead_time
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ?
-            ORDER BY c.created_at DESC
-        `;
-
-        db.query(query, [userId], (err, results) => {
-            if (err) {
-                console.error('Error fetching updated cart:', err);
-                return res.status(500).json({ error: 'Database error' });
-            }
-
-            const items = results.map(item => ({
-                id: item.product_id,
-                name: item.name,
-                description: item.description,
-                price: item.price,
-                category: item.category,
-                image: item.image,
-                maker: item.maker,
-                lead_time: item.lead_time,
-                quantity: item.quantity,
-                cartItemId: item.id
-            }));
-
-            res.json({ items });
-        });
+        return item;
     });
+
+    res.json({ items: updatedCart });
 });
 
 // Remove item from cart
 router.delete('/:productId', authenticateToken, (req, res) => {
-    const userId = req.user.id;
     const productId = req.params.productId;
+    const { cartItems } = req.body;
 
-    db.query('DELETE FROM cart WHERE user_id = ? AND product_id = ?', 
-        [userId, productId], (err, result) => {
-        if (err) {
-            console.error('Error removing from cart:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
+    if (!cartItems || !Array.isArray(cartItems)) {
+        return res.status(400).json({ error: 'Cart items are required' });
+    }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Cart item not found' });
-        }
+    // Remove the item
+    const updatedCart = cartItems.filter(item => item.id != productId);
 
-        // Return updated cart
-        const query = `
-            SELECT c.id, c.quantity, c.created_at,
-                   p.id as product_id, p.name, p.description, p.price, p.category, p.image, p.maker, p.lead_time
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ?
-            ORDER BY c.created_at DESC
-        `;
-
-        db.query(query, [userId], (err, results) => {
-            if (err) {
-                console.error('Error fetching updated cart:', err);
-                return res.status(500).json({ error: 'Database error' });
-            }
-
-            const items = results.map(item => ({
-                id: item.product_id,
-                name: item.name,
-                description: item.description,
-                price: item.price,
-                category: item.category,
-                image: item.image,
-                maker: item.maker,
-                lead_time: item.lead_time,
-                quantity: item.quantity,
-                cartItemId: item.id
-            }));
-
-            res.json({ items });
-        });
-    });
+    res.json({ items: updatedCart });
 });
 
 // Clear entire cart
 router.delete('/', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-
-    db.query('DELETE FROM cart WHERE user_id = ?', [userId], (err) => {
-        if (err) {
-            console.error('Error clearing cart:', err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        res.json({ message: 'Cart cleared successfully', items: [] });
-    });
+    res.json({ message: 'Cart cleared successfully', items: [] });
 });
 
 module.exports = router; 

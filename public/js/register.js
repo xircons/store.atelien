@@ -17,24 +17,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
 
+        // Clear previous validation states
+        clearValidationErrors();
+
         // Basic validation
-        if (!email || !password || !confirmPassword) {
-            showError('Please fill in all fields.');
-            return;
+        let hasErrors = false;
+
+        if (!email) {
+            showFieldError(emailInput, 'Email is required');
+            hasErrors = true;
+        } else if (!isValidEmail(email)) {
+            showFieldError(emailInput, 'Please enter a valid email address');
+            hasErrors = true;
         }
 
-        if (!isValidEmail(email)) {
-            showError('Please enter a valid email address.');
-            return;
+        if (!password) {
+            showFieldError(passwordInput, 'Password is required');
+            hasErrors = true;
+        } else if (password.length < 6) {
+            showFieldError(passwordInput, 'Password must be at least 6 characters long');
+            hasErrors = true;
         }
 
-        if (password !== confirmPassword) {
-            showError('Passwords do not match.');
-            return;
+        if (!confirmPassword) {
+            showFieldError(confirmPasswordInput, 'Please confirm your password');
+            hasErrors = true;
+        } else if (password !== confirmPassword) {
+            showFieldError(confirmPasswordInput, 'Passwords do not match');
+            hasErrors = true;
         }
 
-        if (password.length < 6) {
-            showError('Password must be at least 6 characters long.');
+        if (hasErrors) {
             return;
         }
 
@@ -77,26 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return emailRegex.test(email);
     }
 
-    // Password strength validation (real-time)
-    passwordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
-        if (password.length > 0 && password.length < 6) {
-            passwordInput.style.borderColor = '#c33';
-        } else {
-            passwordInput.style.borderColor = '#e0e0e0';
-        }
-    });
+    // Show field-specific error
+    function showFieldError(field, message) {
+        field.classList.add('validation-triggered', 'error');
+        field.style.borderBottomColor = '#ff0000';
+        // The message parameter is kept for future use, like showing a tooltip
+    }
 
-    // Confirm password validation (real-time)
-    confirmPasswordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-        if (confirmPassword.length > 0 && password !== confirmPassword) {
-            confirmPasswordInput.style.borderColor = '#c33';
-        } else {
-            confirmPasswordInput.style.borderColor = '#e0e0e0';
-        }
-    });
+    // Clear validation errors
+    function clearValidationErrors() {
+        const inputs = registerForm.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.classList.remove('validation-triggered', 'error');
+        });
+    }
 
     // Error message display
     function showError(message) {
@@ -153,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         existingMessages.forEach(msg => msg.remove());
     }
 
-    // Input focus effects
+    // Input focus effects and validation clearing
     const inputs = registerForm.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('focus', () => {
@@ -162,6 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         input.addEventListener('blur', () => {
             input.parentElement.style.transform = 'translateY(0)';
+        });
+
+        // Clear validation errors when user starts typing
+        input.addEventListener('input', () => {
+            if (input.classList.contains('validation-triggered')) {
+                input.classList.remove('validation-triggered', 'error');
+            }
         });
     });
 

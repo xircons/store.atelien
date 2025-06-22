@@ -23,6 +23,35 @@ class Auth {
             const data = await response.json();
 
             if (data.success && data.isLoggedIn) {
+                // Check if this is a different user than before
+                const previousUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+                const newUserId = data.user.id;
+                
+                // If switching to a different user, clear the previous user's cart
+                if (previousUserId && previousUserId !== newUserId.toString()) {
+                    if (typeof clearAllUserCarts === 'function') {
+                        clearAllUserCarts();
+                    } else {
+                        // Fallback: clear all cart-related localStorage items
+                        const keys = Object.keys(localStorage);
+                        keys.forEach(key => {
+                            if (key.startsWith('cart_')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                    }
+                }
+                
+                // Update stored user data
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('userEmail', data.user.email);
+                localStorage.setItem('username', data.user.username || '');
+                localStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userId', data.user.id);
+                sessionStorage.setItem('userEmail', data.user.email);
+                sessionStorage.setItem('username', data.user.username || '');
+                sessionStorage.setItem('isLoggedIn', 'true');
+                
                 this.isLoggedIn = true;
                 this.user = data.user;
             } else {
@@ -51,6 +80,25 @@ class Auth {
             const data = await response.json();
 
             if (data.success) {
+                // Check if this is a different user logging in
+                const previousUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+                const newUserId = data.user.id;
+                
+                // If switching to a different user, clear the previous user's cart
+                if (previousUserId && previousUserId !== newUserId.toString()) {
+                    if (typeof clearAllUserCarts === 'function') {
+                        clearAllUserCarts();
+                    } else {
+                        // Fallback: clear all cart-related localStorage items
+                        const keys = Object.keys(localStorage);
+                        keys.forEach(key => {
+                            if (key.startsWith('cart_')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                    }
+                }
+                
                 // Store authentication data in cookies (handled by server)
                 // Also store in localStorage/sessionStorage for backward compatibility
                 if (remember) {
@@ -70,6 +118,11 @@ class Auth {
                 this.isLoggedIn = true;
                 this.user = data.user;
                 this.updateUI();
+                
+                // Refresh cart for the newly logged in user
+                if (typeof refreshCartForCurrentUser === 'function') {
+                    refreshCartForCurrentUser();
+                }
                 
                 return { success: true, user: this.user };
             } else {
@@ -104,6 +157,9 @@ class Auth {
         sessionStorage.removeItem('userId');
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('isLoggedIn');
+        
+        // Note: We don't clear cart data on logout to preserve user's cart
+        // Cart data will be cleared only when switching to a different user
         
         this.isLoggedIn = false;
         this.user = null;
@@ -200,15 +256,9 @@ class Auth {
         } else {
             // User is not logged in
             if (loginLink) {
-                loginLink.textContent = 'Login';
+                loginLink.innerHTML = 'Login';
                 loginLink.href = 'login.html';
                 loginLink.onclick = null;
-                loginLink.style.cursor = '';
-                loginLink.style.transition = '';
-                
-                // Remove hover event listeners
-                loginLink.removeEventListener('mouseenter', () => {});
-                loginLink.removeEventListener('mouseleave', () => {});
             }
             
             // Disable cart functionality
@@ -219,6 +269,11 @@ class Auth {
             
             // Disable add to cart buttons
             this.disableAddToCartButtons();
+            
+            // Clear cart for unauthenticated user
+            if (typeof clearCartForUnauthenticatedUser === 'function') {
+                clearCartForUnauthenticatedUser();
+            }
         }
     }
 

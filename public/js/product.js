@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user has changed and refresh cart if needed
+    if (typeof checkUserChangeAndRefreshCart === 'function') {
+        checkUserChangeAndRefreshCart();
+    }
+
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('product');
     
@@ -412,44 +417,6 @@ window.addEventListener('resize', () => {
         }
     }, 250); // Debounce resize events
 });
-
-function addToCart(productId, productName, quantity) {
-    fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include', // Include cookies in request
-        body: JSON.stringify({ productId, quantity })
-    })
-    .then(res => {
-        if (!res.ok) {
-            if (res.status === 401) {
-                // User not authenticated, show login prompt
-                if (window.auth && window.auth.showLoginRequired) {
-                    window.auth.showLoginRequired();
-                } else {
-                    window.location.href = '/login.html';
-                }
-                // Return a promise that never resolves to stop the chain
-                return new Promise(() => {}); 
-            }
-            throw new Error('Failed to add item to cart');
-        }
-        return res.json();
-    })
-    .then(data => {
-        // data.items now contains the updated cart
-        if (data && data.items) {
-            showCartAlert(`${productName} added to cart`);
-            console.log('Cart updated:', data.items);
-        }
-    })
-    .catch(error => {
-        console.error('Error adding to cart:', error);
-        showCartAlert('Failed to add item to cart');
-    });
-}
 
 function showCartAlert(message) {
     // Create alert element if it doesn't exist

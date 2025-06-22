@@ -63,6 +63,7 @@
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
+    position: relative;
 }
 
 .form-group input {
@@ -73,8 +74,10 @@
     font-size: clamp(0.8rem, 2vw, 0.8rem);
     font-weight: 400;
     transition: all 0.3s ease;
-    background-color: #fff;
+    background-color: transparent;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
 }
 
 .form-group input:focus {
@@ -84,11 +87,47 @@
 }
 
 .form-group input::placeholder {
-    color: rgba(6, 29, 27, 0.5);
+    color: transparent;
 }
 
 .form-group input:invalid {
-    border-color: #ff6b6b;
+    border-color: #e0e0e0;
+    box-shadow: none;
+}
+
+/* Floating Label Styles */
+.form-group label {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.5rem;
+    color: rgba(6, 29, 27, 0.5);
+    font-size: clamp(0.8rem, 2vw, 0.8rem);
+    font-weight: 400;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 0;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    top: -0.5rem;
+    font-size: clamp(0.7rem, 2vw, 0.7rem);
+}
+
+/* Validation-triggered error styling */
+.form-group input.validation-triggered.error {
+    border-bottom-color: #ff0000 !important;
+    border-bottom-width: 1px !important;
+    transition: all 0.3s ease;
+}
+
+.form-group input.validation-triggered.error + label {
+    color: #ff0000;
+}
+
+.form-group input.validation-triggered.error:focus {
+    border-bottom-color: #ff0000 !important;
+    border-bottom-width: 2px !important;
 }
 
 /* Form Options */

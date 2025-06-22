@@ -26,10 +26,12 @@ app.use((req, res, next) => {
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
+const checkoutRoutes = require('./routes/checkout');
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/checkout', checkoutRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;

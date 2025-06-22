@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Checkout</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+</head>
+<body>
+    <header class="header" id="header">
+        <!-- First nav-container-->
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <img src="images/logo/logo.png" alt="Atelien">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="checkout-container">
+            <div class="checkout-left">
+                <form class="shipping-form" id="checkoutForm">
+                    <h2>Delivery</h2>
+                    <div class="floating-label-group required">
+                        <select id="country" name="country" required placeholder=" ">
+                            <option value="" disabled selected hidden></option>
+                            <option value="TH">Thailand</option>
+                        </select>
+                        <label>Country/Region</label>
+                    </div>
+                    <div class="form-row">
+                        <div class="floating-label-group required">
+                            <input type="text" id="firstName" name="firstName" required placeholder=" ">
+                            <label>First name (e.g., Somchai)</label>
+                        </div>
+                        <div class="floating-label-group required">
+                            <input type="text" id="lastName" name="lastName" required placeholder=" ">
+                            <label>Last name (e.g., Sukjai)</label>
+                        </div>
+                    </div>
+                    <div class="floating-label-group">
+                        <input type="text" id="company" name="company" placeholder=" ">
+                        <label>Company (optional)</label>
+                    </div>
+                    <div class="floating-label-group required">
+                        <input type="text" id="address" name="address" required placeholder=" ">
+                        <label>Address (e.g., 123 Nimman Rd.)</label>
+                    </div>
+                    <div class="floating-label-group">
+                        <input type="text" id="apartment" name="apartment" placeholder=" ">
+                        <label>Apartment, suite, etc. (optional)</label>
+                    </div>
+                    <div class="form-row">
+                        <div class="floating-label-group required">
+                            <input type="text" id="city" name="city" required placeholder=" ">
+                            <label>City (e.g., Chiang Mai)</label>
+                        </div>
+                        <div class="floating-label-group required">
+                            <select id="state" name="state" required placeholder=" ">
+                                <option value="" disabled selected hidden></option>
+                                <option value="Amnat Charoen">Amnat Charoen</option>
+                                <option value="Ang Thong">Ang Thong</option>
+                                <option value="Bangkok">Bangkok</option>
+                                <option value="Bueng Kan">Bueng Kan</option>
+                                <option value="Buriram">Buriram</option>
+                                <option value="Chachoengsao">Chachoengsao</option>
+                                <option value="Chai Nat">Chai Nat</option>
+                                <option value="Chaiyaphum">Chaiyaphum</option>
+                                <option value="Chanthaburi">Chanthaburi</option>
+                                <option value="Chiang Mai">Chiang Mai</option>
+                                <option value="Chiang Rai">Chiang Rai</option>
+                                <option value="Chonburi">Chonburi</option>
+                                <option value="Chumphon">Chumphon</option>
+                                <option value="Kalasin">Kalasin</option>
+                                <option value="Kamphaeng Phet">Kamphaeng Phet</option>
+                                <option value="Kanchanaburi">Kanchanaburi</option>
+                                <option value="Khon Kaen">Khon Kaen</option>
+                                <option value="Krabi">Krabi</option>
+                                <option value="Lampang">Lampang</option>
+                                <option value="Lamphun">Lamphun</option>
+                                <option value="Loei">Loei</option>
+                                <option value="Lopburi">Lopburi</option>
+                                <option value="Mae Hong Son">Mae Hong Son</option>
+                                <option value="Maha Sarakham">Maha Sarakham</option>
+                                <option value="Mukdahan">Mukdahan</option>
+                                <option value="Nakhon Nayok">Nakhon Nayok</option>
+                                <option value="Nakhon Pathom">Nakhon Pathom</option>
+                                <option value="Nakhon Phanom">Nakhon Phanom</option>
+                                <option value="Nakhon Ratchasima">Nakhon Ratchasima</option>
+                                <option value="Nakhon Sawan">Nakhon Sawan</option>
+                                <option value="Nakhon Si Thammarat">Nakhon Si Thammarat</option>
+                                <option value="Nan">Nan</option>
+                                <option value="Narathiwat">Narathiwat</option>
+                                <option value="Nong Bua Lamphu">Nong Bua Lamphu</option>
+                                <option value="Nong Khai">Nong Khai</option>
+                                <option value="Nonthaburi">Nonthaburi</option>
+                                <option value="Pathum Thani">Pathum Thani</option>
+                                <option value="Pattani">Pattani</option>
+                                <option value="Phang Nga">Phang Nga</option>
+                                <option value="Phatthalung">Phatthalung</option>
+                                <option value="Phayao">Phayao</option>
+                                <option value="Phetchabun">Phetchabun</option>
+                                <option value="Phetchaburi">Phetchaburi</option>
+                                <option value="Phichit">Phichit</option>
+                                <option value="Phitsanulok">Phitsanulok</option>
+                                <option value="Phra Nakhon Si Ayutthaya">Phra Nakhon Si Ayutthaya</option>
+                                <option value="Phrae">Phrae</option>
+                                <option value="Phuket">Phuket</option>
+                                <option value="Prachinburi">Prachinburi</option>
+                                <option value="Prachuap Khiri Khan">Prachuap Khiri Khan</option>
+                                <option value="Ranong">Ranong</option>
+                                <option value="Ratchaburi">Ratchaburi</option>
+                                <option value="Rayong">Rayong</option>
+                                <option value="Roi Et">Roi Et</option>
+                                <option value="Sa Kaeo">Sa Kaeo</option>
+                                <option value="Sakon Nakhon">Sakon Nakhon</option>
+                                <option value="Samut Prakan">Samut Prakan</option>
+                                <option value="Samut Sakhon">Samut Sakhon</option>
+                                <option value="Samut Songkhram">Samut Songkhram</option>
+                                <option value="Saraburi">Saraburi</option>
+                                <option value="Satun">Satun</option>
+                                <option value="Sing Buri">Sing Buri</option>
+                                <option value="Sisaket">Sisaket</option>
+                                <option value="Songkhla">Songkhla</option>
+                                <option value="Sukhothai">Sukhothai</option>
+                                <option value="Suphan Buri">Suphan Buri</option>
+                                <option value="Surat Thani">Surat Thani</option>
+                                <option value="Surin">Surin</option>
+                                <option value="Tak">Tak</option>
+                                <option value="Trang">Trang</option>
+                                <option value="Trat">Trat</option>
+                                <option value="Ubon Ratchathani">Ubon Ratchathani</option>
+                                <option value="Udon Thani">Udon Thani</option>
+                                <option value="Uthai Thani">Uthai Thani</option>
+                                <option value="Uttaradit">Uttaradit</option>
+                                <option value="Yala">Yala</option>
+                                <option value="Yasothon">Yasothon</option>
+                            </select>
+                            <label>State</label>
+                        </div>
+                        <div class="floating-label-group required">
+                            <input type="text" id="zip" name="zip" required placeholder=" ">
+                            <label>Zip code (e.g., 50000)</label>
+                        </div>
+                    </div>
+                    <div class="floating-label-group required">
+                        <input type="tel" id="phone" name="phone" required placeholder=" ">
+                        <label>Phone (e.g., 0994567890)</label>
+                    </div>
+                    <h2>Shipping method</h2>
+                    <div class="shipping-methods">
+                        <label class="shipping-option">
+                            <input type="radio" name="shipping" value="standard" checked>
+                            <div class="shipping-main">
+                                <div class="shipping-details">
+                                    <span class="shipping-name">Standard International Shipping</span>
+                                    <span class="shipping-time">5 to 10 business days</span>
+                                </div>
+                                <span class="price">$650.00</span>
+                            </div>
+                        </label>
+                        <label class="shipping-option">
+                            <input type="radio" name="shipping" value="express">
+                            <div class="shipping-main">
+                                <div class="shipping-details">
+                                    <span class="shipping-name">Express International Shipping</span>
+                                    <span class="shipping-time">3 to 5 business days</span>
+                                </div>
+                                <span class="price">$800.00</span>
+                            </div>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="checkout-right">
+                <div class="cart-summary">
+                    <h2>Your Cart</h2>
+                    <div class="cart-items" id="checkoutCartItems">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </div>
+                    <div class="discount-row">
+                        <input type="text" id="discountCode" placeholder="Discount code">
+                        <button id="applyDiscount">Apply</button>
+                    </div>
+                    <div class="summary-row">
+                        <span>Subtotal</span><span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row" id="discountRow" style="display: none;">
+                        <span>Discount</span><span id="discountAmount">-$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span><span id="shippingCost">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Estimated taxes (7%)</span><span id="taxes">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span><span id="total">$0.00</span>
+                    </div>
+                    <button class="continue-btn" id="continueToPayment">Check Out</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/checkout.js"></script>
+    <script src="/js/cart.js"></script>
+</body>
+</html> 

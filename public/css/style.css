@@ -295,6 +295,18 @@ body {
     line-height: 1;
 }
 
+@media (max-width: 1400px) {
+    .nav-dropdown {
+        gap: 10rem;
+    }
+}
+
+@media (max-width: 1050px) {
+    .nav-dropdown {
+        gap: 8rem;
+    }
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .nav-dropdown {

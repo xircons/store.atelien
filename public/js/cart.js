@@ -1,3 +1,141 @@
+// Function to get user-specific cart key
+function getCartKey() {
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    return userId ? `cart_${userId}` : 'cart_guest';
+}
+
+// Function to clear all user carts (used when logging out)
+function clearAllUserCarts() {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+        if (key.startsWith('cart_')) {
+            localStorage.removeItem(key);
+        }
+    });
+}
+
+// Function to show cart alerts
+function showCartAlert(message) {
+    // Create alert element if it doesn't exist
+    let alert = document.getElementById('cartAlert');
+    if (!alert) {
+        alert = document.createElement('div');
+        alert.id = 'cartAlert';
+        alert.className = 'cart-alert';
+        alert.innerHTML = `
+            <div class="alert-content">
+                <span class="alert-message">${message}</span>
+                <button class="alert-close" onclick="this.parentElement.parentElement.classList.remove('show')">×</button>
+            </div>
+        `;
+        document.body.appendChild(alert);
+    } else {
+        const alertMessage = alert.querySelector('.alert-message');
+        if (alertMessage) {
+            alertMessage.textContent = message;
+        }
+    }
+    
+    // Show alert
+    alert.classList.add('show');
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        alert.classList.remove('show');
+    }, 3000);
+}
+
+// Global function to add item to cart (called from product pages)
+window.addToCart = function(productId, productName, quantity = 1) {
+    // Check if user is authenticated using the Auth class
+    if (!window.auth || !window.auth.isAuthenticated()) {
+        // User not authenticated, show login prompt
+        if (window.auth && window.auth.showLoginRequired) {
+            window.auth.showLoginRequired();
+        } else {
+            window.location.href = '/login.html';
+        }
+        return;
+    }
+
+    // Get current cart from user-specific localStorage
+    const cartKey = getCartKey();
+    const currentCart = JSON.parse(localStorage.getItem(cartKey) || '{"items": []}');
+    
+    // Get product details from the current page using correct selectors
+    const productImage = document.querySelector('.gallery-main img')?.src || '';
+    const productPriceElement = document.getElementById('product-price');
+    const productPrice = productPriceElement ? parseFloat(productPriceElement.textContent.replace(/[^0-9.]/g, '')) : 0;
+    const productMakerElement = document.getElementById('product-maker');
+    const productMaker = productMakerElement ? productMakerElement.textContent.trim() : '';
+    const productLeadTimeElement = document.getElementById('product-lead-time');
+    const productLeadTime = productLeadTimeElement ? productLeadTimeElement.textContent.trim() : '';
+    
+    // Check if product already exists in cart
+    const existingItemIndex = currentCart.items.findIndex(item => item.id == productId);
+    
+    if (existingItemIndex !== -1) {
+        // Update quantity of existing item
+        currentCart.items[existingItemIndex].quantity += quantity;
+    } else {
+        // Add new item with full product details
+        currentCart.items.push({
+            id: productId,
+            name: productName,
+            quantity: quantity,
+            price: productPrice,
+            image: productImage,
+            maker: productMaker,
+            lead_time: productLeadTime
+        });
+    }
+
+    // Save to user-specific localStorage
+    localStorage.setItem(cartKey, JSON.stringify(currentCart));
+
+    fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include', // Include cookies in request
+        body: JSON.stringify({ 
+            productId, 
+            quantity,
+            cartItems: currentCart.items
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            if (res.status === 401) {
+                // User not authenticated, show login prompt
+                if (window.auth && window.auth.showLoginRequired) {
+                    window.auth.showLoginRequired();
+                } else {
+                    window.location.href = '/login.html';
+                }
+                // Return a promise that never resolves to stop the chain
+                return new Promise(() => {}); 
+            }
+            throw new Error('Failed to add item to cart');
+        }
+        return res.json();
+    })
+    .then(data => {
+        // Don't update localStorage with server response to prevent duplicates
+        // The localStorage already has the correct data
+        
+        // data.items now contains the updated cart
+        if (data && data.items) {
+            showCartAlert(`${productName} added to cart`);
+        }
+    })
+    .catch(error => {
+        console.error('Error adding to cart:', error);
+        showCartAlert('Failed to add item to cart');
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const cartItems = document.getElementById('cartItems');
     const cartCount = document.getElementById('cartCount');
@@ -7,75 +145,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertMessage = document.getElementById('alertMessage');
     const alertClose = document.getElementById('alertClose');
 
+    // Check if user has changed and refresh cart if needed
+    checkUserChangeAndRefreshCart();
+
     // Load cart on page load
     loadCart();
 
     // Event listeners
-    alertClose.addEventListener('click', () => {
-        hideAlert();
-    });
+    if (alertClose) {
+        alertClose.addEventListener('click', () => {
+            hideAlert();
+        });
+    }
 
     // Auto-hide alert after 3 seconds
     let alertTimeout;
 
     function showAlert(message) {
-        alertMessage.textContent = message;
-        cartAlert.classList.add('show');
-        
-        // Clear existing timeout
-        if (alertTimeout) {
-            clearTimeout(alertTimeout);
+        if (alertMessage && cartAlert) {
+            alertMessage.textContent = message;
+            cartAlert.classList.add('show');
+            
+            // Clear existing timeout
+            if (alertTimeout) {
+                clearTimeout(alertTimeout);
+            }
+            
+            // Auto-hide after 3 seconds
+            alertTimeout = setTimeout(() => {
+                hideAlert();
+            }, 3000);
         }
-        
-        // Auto-hide after 3 seconds
-        alertTimeout = setTimeout(() => {
-            hideAlert();
-        }, 3000);
     }
 
     function hideAlert() {
-        cartAlert.classList.remove('show');
+        if (cartAlert) {
+            cartAlert.classList.remove('show');
+        }
     }
 
     function loadCart() {
-        fetch('/api/cart', {
-            credentials: 'include' // Include cookies in request
-        })
-        .then(res => {
-            if (!res.ok) {
-                if (res.status === 401) {
-                    // User not authenticated, show empty cart
-                    updateCartForLoggedOutUser();
-                    return;
-                }
-                throw new Error('Failed to load cart');
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data.items && data.items.length > 0) {
-                displayCartItems(data.items);
-                updateCartSummary(data);
-            } else {
-                updateCartForLoggedOutUser();
-            }
-        })
-        .catch(error => {
-            console.error('Error loading cart:', error);
+        // Load cart from user-specific localStorage
+        const cartData = getCartFromStorage();
+        
+        if (cartData && cartData.items && cartData.items.length > 0) {
+            displayCartItems(cartData.items);
+            updateCartSummary(cartData);
+        } else {
             updateCartForLoggedOutUser();
-        });
+        }
+    }
+
+    function getCartFromStorage() {
+        const cartKey = getCartKey();
+        const cartData = localStorage.getItem(cartKey);
+        return cartData ? JSON.parse(cartData) : { items: [] };
+    }
+
+    function saveCartToStorage(cartData) {
+        const cartKey = getCartKey();
+        localStorage.setItem(cartKey, JSON.stringify(cartData));
     }
 
     function updateCartForLoggedOutUser() {
-        const existingItems = cartItems.querySelectorAll('.cart-item');
-        existingItems.forEach(item => item.remove());
+        if (cartItems) {
+            const existingItems = cartItems.querySelectorAll('.cart-item');
+            existingItems.forEach(item => item.remove());
+        }
         
-        cartCount.textContent = '0 Items';
-        subtotal.textContent = '$0.00';
-        checkoutBtn.disabled = true;
+        if (cartCount) cartCount.textContent = '0 Items';
+        if (subtotal) subtotal.textContent = '$0.00';
+        if (checkoutBtn) checkoutBtn.disabled = true;
     }
 
     function displayCartItems(items) {
+        if (!cartItems) return;
+        
         // Clear existing items
         const existingItems = cartItems.querySelectorAll('.cart-item');
         existingItems.forEach(item => item.remove());
@@ -115,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemCount = data.items.reduce((total, item) => total + item.quantity, 0);
         const subtotalAmount = data.items.reduce((total, item) => total + (item.price * item.quantity), 0);
         
-        cartCount.textContent = `${itemCount} Item${itemCount !== 1 ? 's' : ''}`;
-        subtotal.textContent = `$${subtotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        checkoutBtn.disabled = itemCount === 0;
+        if (cartCount) cartCount.textContent = `${itemCount} Item${itemCount !== 1 ? 's' : ''}`;
+        if (subtotal) subtotal.textContent = `$${subtotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        if (checkoutBtn) checkoutBtn.disabled = itemCount === 0;
     }
 
     // Global functions for cart operations
@@ -126,13 +271,18 @@ document.addEventListener('DOMContentLoaded', () => {
             newQuantity = 1;
         }
 
+        const currentCart = getCartFromStorage();
+
         fetch(`/api/cart/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             credentials: 'include', // Include cookies in request
-            body: JSON.stringify({ quantity: parseInt(newQuantity) })
+            body: JSON.stringify({ 
+                quantity: parseInt(newQuantity),
+                cartItems: currentCart.items
+            })
         })
         .then(res => {
             if (!res.ok) {
@@ -146,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             if (data) {
+                saveCartToStorage(data);
                 displayCartItems(data.items);
                 updateCartSummary(data);
                 showAlert('Cart updated successfully');
@@ -158,9 +309,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.removeItem = function(productId) {
+        const currentCart = getCartFromStorage();
+
         fetch(`/api/cart/${productId}`, {
             method: 'DELETE',
-            credentials: 'include' // Include cookies in request
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include', // Include cookies in request
+            body: JSON.stringify({ cartItems: currentCart.items })
         })
         .then(res => {
             if (!res.ok) {
@@ -174,9 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             if (data.items && data.items.length > 0) {
+                saveCartToStorage(data);
                 displayCartItems(data.items);
                 updateCartSummary(data);
             } else {
+                saveCartToStorage({ items: [] });
                 updateCartForLoggedOutUser();
             }
             showAlert('Item removed from cart');
@@ -188,67 +347,101 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Checkout button functionality
-    checkoutBtn.addEventListener('click', () => {
-        const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-        if (!token) {
-            showAlert('Please log in to proceed to checkout');
-            return;
-        }
-        
-        // For now, just show a message
-        showAlert('Checkout functionality coming soon!');
-    });
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            // Check if user is authenticated using the Auth class
+            if (window.auth && window.auth.isAuthenticated()) {
+                // User is authenticated, proceed to checkout
+                window.location.href = 'checkout.html';
+            } else {
+                // User not authenticated, show login prompt
+                if (window.auth && window.auth.showLoginRequired) {
+                    window.auth.showLoginRequired();
+                } else {
+                    showAlert('Please log in to proceed to checkout');
+                }
+            }
+        });
+    }
 });
 
-// Global function to add item to cart (called from product pages)
-window.addToCart = function(productId, productName, quantity = 1) {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    if (!token) {
-        // Redirect to login if not authenticated
-        window.location.href = '/login.html';
-        return;
+// Function to refresh cart when user changes
+function refreshCartForCurrentUser() {
+    // This will be called when user logs in to load their specific cart
+    if (typeof loadCart === 'function') {
+        loadCart();
     }
+}
 
-    fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId: productId, quantity: quantity })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error('Failed to add item to cart');
-        return res.json();
-    })
-    .then(data => {
-        // Show success alert
-        const alert = document.getElementById('cartAlert');
-        const alertMessage = document.getElementById('alertMessage');
+// Function to clear cart when user is not authenticated
+function clearCartForUnauthenticatedUser() {
+    // Clear any existing cart data when user is not authenticated
+    const cartKey = getCartKey();
+    if (cartKey === 'cart_guest') {
+        localStorage.removeItem(cartKey);
+    }
+}
+
+// Function to check if user has changed and refresh cart
+function checkUserChangeAndRefreshCart() {
+    const currentUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const lastKnownUserId = localStorage.getItem('lastKnownUserId');
+    
+    // If user has changed, refresh the cart
+    if (currentUserId !== lastKnownUserId) {
+        // Update the last known user ID
+        localStorage.setItem('lastKnownUserId', currentUserId);
         
-        if (alert && alertMessage) {
-            alertMessage.textContent = `${productName} added to cart`;
-            alert.classList.add('show');
-            
-            // Auto-hide after 3 seconds
-            setTimeout(() => {
-                alert.classList.remove('show');
-            }, 3000);
+        // Refresh cart for the current user
+        if (typeof loadCart === 'function') {
+            loadCart();
         }
-    })
-    .catch(error => {
-        console.error('Error adding to cart:', error);
-        // Show error alert
-        const alert = document.getElementById('cartAlert');
-        const alertMessage = document.getElementById('alertMessage');
-        
-        if (alert && alertMessage) {
-            alertMessage.textContent = 'Failed to add item to cart';
-            alert.classList.add('show');
-            
-            setTimeout(() => {
-                alert.classList.remove('show');
-            }, 3000);
+    }
+}
+
+// Function to completely reset user's cart after successful checkout
+function resetUserCart() {
+    const cartKey = getCartKey();
+    
+    // Clear from localStorage
+    localStorage.removeItem(cartKey);
+    
+    // Clear from sessionStorage
+    sessionStorage.removeItem(cartKey);
+    
+    // Clear any other cart-related data
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+        if (key.startsWith('cart_')) {
+            localStorage.removeItem(key);
         }
     });
-}; 
+    
+    // Reset cart count in UI
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
+        cartCountElement.textContent = '0 Items';
+    }
+    
+    // Reset cart items display
+    const cartItemsElement = document.getElementById('cartItems');
+    if (cartItemsElement) {
+        cartItemsElement.innerHTML = '';
+    }
+    
+    // Reset subtotal
+    const subtotalElement = document.getElementById('subtotal');
+    if (subtotalElement) {
+        subtotalElement.textContent = '$0.00';
+    }
+    
+    console.log('User cart has been completely reset');
+}
+
+// Make functions globally available
+window.getCartKey = getCartKey;
+window.clearAllUserCarts = clearAllUserCarts;
+window.refreshCartForCurrentUser = refreshCartForCurrentUser;
+window.clearCartForUnauthenticatedUser = clearCartForUnauthenticatedUser;
+window.checkUserChangeAndRefreshCart = checkUserChangeAndRefreshCart;
+window.resetUserCart = resetUserCart; 

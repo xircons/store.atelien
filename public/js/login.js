@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const rememberCheckbox = document.getElementById('remember');
 
     // Form submission handler
     loginForm.addEventListener('submit', async (e) => {
@@ -25,16 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const email = emailInput.value.trim();
         const password = passwordInput.value;
-        const remember = rememberCheckbox.checked;
+        
+        // Clear previous validation states
+        clearValidationErrors();
         
         // Basic validation
-        if (!email || !password) {
-            showError('Please fill in all fields');
-            return;
+        let hasErrors = false;
+        
+        if (!email) {
+            showFieldError(emailInput, 'Email is required');
+            hasErrors = true;
+        } else if (!isValidEmail(email)) {
+            showFieldError(emailInput, 'Please enter a valid email address');
+            hasErrors = true;
         }
         
-        if (!isValidEmail(email)) {
-            showError('Please enter a valid email address');
+        if (!password) {
+            showFieldError(passwordInput, 'Password is required');
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
             return;
         }
         
@@ -46,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // Use auth system's login method
-            const result = await window.auth.login(email, password, remember);
+            const result = await window.auth.login(email, password, false);
             
             if (result.success) {
                 // Success - redirect to home page
@@ -70,6 +80,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    // Show field-specific error
+    function showFieldError(field, message) {
+        field.classList.add('validation-triggered', 'error');
+        field.style.borderBottomColor = '#ff0000';
+    }
+
+    // Clear validation errors
+    function clearValidationErrors() {
+        const inputs = loginForm.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.classList.remove('validation-triggered', 'error');
+        });
     }
 
     // Error message display
@@ -136,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Input focus effects
+    // Input focus effects and validation clearing
     const inputs = loginForm.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('focus', () => {
@@ -145,6 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         input.addEventListener('blur', () => {
             input.parentElement.style.transform = 'translateY(0)';
+        });
+
+        // Clear validation errors when user starts typing
+        input.addEventListener('input', () => {
+            if (input.classList.contains('validation-triggered')) {
+                input.classList.remove('validation-triggered', 'error');
+                input.style.borderBottomColor = '';
+                input.style.borderBottomWidth = '';
+            }
         });
     });
 

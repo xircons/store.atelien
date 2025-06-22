@@ -338,14 +338,9 @@
 .related-product {
     text-decoration: none;
     color: inherit;
-    transition: transform 0.3s ease;
     width: 100%;
     max-width: 300px;
     justify-self: center;
-}
-
-.related-product:hover {
-    transform: translateY(-5px);
 }
 
 .related-product img {
