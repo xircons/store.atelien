@@ -15,6 +15,7 @@ body{
   top: 0;
   left: 0;
   z-index: 100;
+  box-shadow: 7px -1px 12px 0px rgba(0,0,0,0.025);
 }
 .sidebar-header {
   width: 100%;
@@ -47,10 +48,12 @@ body{
   color: rgba(6, 29, 27, 0.8);
   text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 400;
   display: flex;
   align-items: center;
   transition: background 0.15s;
   gap: 0.7em;
+  padding: 0 1rem;
 }
 .sidebar-nav a:hover {
   background: rgba(6, 29, 27, 0.05);
@@ -64,8 +67,8 @@ body{
 }
 .sidebar-dot {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: rgba(6, 29, 27, 0.25) !important;;
   margin-right: 0.2em;

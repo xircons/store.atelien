@@ -187,13 +187,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadCart() {
         // Load cart from user-specific localStorage
         const cartData = getCartFromStorage();
-        
-        if (cartData && cartData.items && cartData.items.length > 0) {
-            displayCartItems(cartData.items);
-            updateCartSummary(cartData);
-        } else {
+        if (!cartData || !cartData.items || cartData.items.length === 0) {
             updateCartForLoggedOutUser();
+            return;
         }
+        // Get all product IDs in the cart
+        const productIds = cartData.items.map(item => item.id).join(',');
+        // Fetch only enabled products from the API
+        fetch(`/api/products?status=enable`)
+            .then(res => res.json())
+            .then(products => {
+                // Only keep items in cart that are still enabled
+                const enabledIds = new Set(products.map(p => String(p.id)));
+                const filteredItems = cartData.items.filter(item => enabledIds.has(String(item.id)));
+                // If any items were removed, update localStorage (no alert)
+                if (filteredItems.length !== cartData.items.length) {
+                    saveCartToStorage({ items: filteredItems });
+                }
+                if (filteredItems.length > 0) {
+                    displayCartItems(filteredItems);
+                    updateCartSummary({ items: filteredItems });
+                } else {
+                    updateCartForLoggedOutUser();
+                }
+            })
+            .catch(err => {
+                // If API fails, just show the cart as is
+                displayCartItems(cartData.items);
+                updateCartSummary(cartData);
+            });
     }
 
     function getCartFromStorage() {

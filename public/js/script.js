@@ -75,7 +75,7 @@ function injectAdminButton() {
             const navLeft = document.querySelector('.nav-left .nav-menu');
             if (navLeft && !document.getElementById('adminMenuBtn')) {
                 const adminBtn = document.createElement('a');
-                adminBtn.href = '/admin_menu/index.html';
+                adminBtn.href = '/admin-dashboard/overview.html';
                 adminBtn.className = 'nav-item';
                 adminBtn.id = 'adminMenuBtn';
                 adminBtn.textContent = 'Admin';

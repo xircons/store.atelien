@@ -210,7 +210,7 @@ body {
         width: 56px;
         height: 56px;
     }
-    .product-visuality, .product-edit, .product-delete {
+    .product-status, .product-edit, .product-delete {
         font-size: 1.1rem;
         margin-top: 0;
         justify-content: flex-start;
@@ -240,7 +240,7 @@ body {
 .header-product, .header-price, .header-category {
     text-align: left;
 }
-.header-visuality, .header-edit, .header-delete {
+.header-status, .header-edit, .header-delete {
     text-align: center;
 }
 .header-product {
@@ -308,18 +308,63 @@ body {
     margin-bottom: 0.5rem;
     max-width: 100%;
 }
-.product-visuality, .product-edit, .product-delete {
+.product-status, .product-edit, .product-delete {
     align-self: flex-start;
     justify-content: center;
     text-align: center;
 }
-.product-visuality i,
+.product-status i,
 .product-edit i,
 .product-delete i {
-    color: #2a2a2a;
-    font-size: 1rem;
-    line-height: 1;
-    vertical-align: middle;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+}
+
+.product-status i:hover,
+.product-edit i:hover,
+.product-delete i:hover {
+    background: #f3f4f6;
+}
+
+/* Status toggle specific styles */
+.status-toggle {
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.status-toggle.status-enabled {
+    color: #22c55e;
+}
+
+.status-toggle.status-disabled {
+    color: #f87171;
+}
+
+.status-toggle:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.status-toggle.status-enabled:hover {
+    color: #16a34a;
+    background: #fff !important;
+}
+
+.status-toggle.status-disabled:hover {
+    color: #dc2626;
+    background: #fff !important;
+}
+
+/* Loading state for status toggle */
+.status-toggle[style*="opacity: 0.5"] {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.5; }
 }
 .product-info-title {
     font-size: 1.25rem;
@@ -405,7 +450,7 @@ body {
     color: #64748b;
     transition: color 0.2s;
 }
-.product-visuality {
+.product-status {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -439,4 +484,78 @@ body {
     width: 48px;
     height: 48px;
   }
+}
+
+.product-alert {
+    display: none;
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 2000;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    width: fit-content;
+    min-width: 180px;
+    max-width: 90vw;
+    padding: 0;
+    animation: slideInFromRight 0.3s ease-out;
+}
+.product-alert.show {
+    display: block;
+}
+.product-alert.hide {
+    animation: slideOutToRight 0.3s ease-in forwards;
+}
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background-color: #2a2a2a;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.alert-message {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #fff;
+    flex: 1;
+    min-width: 0;
+    max-width: 220px;
+}
+.alert-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+    margin: 0;
+}
+.alert-close:hover {
+    color: #d32f2f;
+}
+@keyframes slideInFromRight {
+    from { 
+        opacity: 0; 
+        transform: translateX(100%); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+@keyframes slideOutToRight {
+    from { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+    to { 
+        opacity: 0; 
+        transform: translateX(100%); 
+    }
 }

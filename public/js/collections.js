@@ -40,7 +40,7 @@
             container.innerHTML = '<p>Loading...</p>';
         }
         
-        fetch(`/api/products?collection=${collection}`)
+        fetch(`/api/products?collection=${collection}&status=enable`)
             .then(res => {
                 if (!res.ok) throw new Error('Network response was not ok');
                 return res.json();
