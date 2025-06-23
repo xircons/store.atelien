@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/overview.css">
+</head>
+<body>
+    <!-- Sidebar include -->
+    <div id="sidebar-container"></div>
+    <script>
+    fetch('sidebar.html').then(r => r.text()).then(html => {
+      document.getElementById('sidebar-container').innerHTML = html;
+    });
+    </script>
+    <div class="main-content" style="margin-left:275px; padding:2rem;">
+        <div class="chart-topproduct-row" style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: stretch;">
+            <div class="chart-container" style="flex: 2 1 400px; min-width: 320px;">
+                <div class="chart-header">
+                    <h2 class="chart-title">My Cart</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card active" id="statProfit" onclick="switchChart('profit')">
+                        <h3>Total Revenue</h3>
+                        <div class="value" id="totalRevenue">$485,600</div>
+                        <div class="change positive" id="revenueChange">+12.5% from last month</div>
+                    </div>
+                    <div class="stat-card" id="statOrders" onclick="switchChart('orders')">
+                        <h3>Total Orders</h3>
+                        <div class="value" id="totalOrders">5,870</div>
+                        <div class="change positive" id="ordersChange">+8.3% from last month</div>
+                    </div>
+                    <div class="stat-card" id="statUsers" onclick="switchChart('users')">
+                        <h3>New Users</h3>
+                        <div class="value" id="totalUsers">1,234</div>
+                        <div class="change positive" id="usersChange">+5.2% from last month</div>
+                    </div>
+                </div>
+                <div class="loading" id="loading">Loading chart data...</div>
+                <div class="chart-wrapper">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            <div class="top-product-container">
+                <div class="top-product-header">
+                    <h3>Top product</h3>
+                </div>
+                <ul class="top-product-list">
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Maneki Neko Poster">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Maneki Neko Poster</div>
+                            <div class="top-product-sold">Sold: 1249</div>
+                        </div>
+                        <span class="top-product-badge positive">+15.2%</span>
+                    </li>
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Maneki Neko Poster">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Maneki Neko Poster</div>
+                            <div class="top-product-sold">Sold: 1249</div>
+                        </div>
+                        <span class="top-product-badge positive">+15.2%</span>
+                    </li>
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Spiky Ring">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Spiky Ring</div>
+                            <div class="top-product-sold">Sold: 1073</div>
+                        </div>
+                        <span class="top-product-badge positive">+9.5%</span>
+                    </li>
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Pastel Petals Poster">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Pastel Petals Poster</div>
+                            <div class="top-product-sold">Sold: 1022</div>
+                        </div>
+                        <span class="top-product-badge positive">+2.3%</span>
+                    </li>
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Il Limone">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Il Limone</div>
+                            <div class="top-product-sold">Sold: 992</div>
+                        </div>
+                        <span class="top-product-badge negative">-0.7%</span>
+                    </li>
+                    <li class="top-product-item">
+                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Ringed Earring">
+                        <div class="top-product-info">
+                            <div class="top-product-name">Ringed Earring</div>
+                            <div class="top-product-sold">Sold: 1201</div>
+                        </div>
+                        <span class="top-product-badge negative">-1.1%</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="recent-orders-container">
+            <div class="recent-orders">
+                <div class="recent-orders-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="font-size: 2.25rem; font-weight: 400; color:#2a2a2a; margin: 0;">Recent Orders</h2>
+                    <a href="order-list.html" class="view-orders-btn">View Orders</a>
+                </div>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Amount Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#92627</td>
+                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
+                            <td>09/07/2022</td>
+                            <td>Tara Fletcher</td>
+                            <td class="amount">$279.00</td>
+                        </tr>
+                        <tr>
+                            <td>#92509</td>
+                            <td><span class="status-badge status-pending"><span class="status-dot"></span>Pending</span></td>
+                            <td>26/06/2022</td>
+                            <td>Joyce Freeman</td>
+                            <td class="amount">$831.00</td>
+                        </tr>
+                        <tr>
+                            <td>#91631</td>
+                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
+                            <td>18/06/2022</td>
+                            <td>Brittany Hale</td>
+                            <td class="amount">$142.00</td>
+                        </tr>
+                        <tr>
+                            <td>#90963</td>
+                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
+                            <td>11/06/2022</td>
+                            <td>Luke Cook</td>
+                            <td class="amount">$232.00</td>
+                        </tr>
+                        <tr>
+                            <td>#89332</td>
+                            <td><span class="status-badge status-pending"><span class="status-dot"></span>Pending</span></td>
+                            <td>02/06/2022</td>
+                            <td>Eileen Horton</td>
+                            <td class="amount">$597.00</td>
+                        </tr>
+                        <tr>
+                            <td>#89107</td>
+                            <td><span class="status-badge status-failed"><span class="status-dot"></span>Failed</span></td>
+                            <td>17/04/2022</td>
+                            <td>Frederick Adams</td>
+                            <td class="amount">$72.00</td>
+                        </tr>
+                        <tr>
+                            <td>#89021</td>
+                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
+                            <td>13/04/2022</td>
+                            <td>Lee Wheeler</td>
+                            <td class="amount">$110.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/chart.js"></script>
+</body>
+</html> 

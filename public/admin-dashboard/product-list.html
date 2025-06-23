@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/product-list.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+</head>
+<body>
+    <!-- Sidebar include -->
+    <div id="sidebar-container"></div>
+    <script>
+    fetch('sidebar.html').then(r => r.text()).then(html => {
+      document.getElementById('sidebar-container').innerHTML = html;
+    });
+    </script>
+        <main class="main-content">
+            <div class="product-container">
+                <div class="product-header">
+                    <h2>Products</h2>
+                    <div class="product-actions">
+                        <button class="btn export">Export</button>
+                        <button class="btn add">+ Add products</button>
+                    </div>
+                </div>
+                <div class="product-items-section">
+                    <div class="product-items-header">
+                        <span class="header-product">Product</span>
+                        <span class="header-price">Price</span>
+                        <span class="header-category">Category</span>
+                        <span class="header-visuality">Visuality</span>
+                        <span class="header-edit">Edit</span>
+                        <span class="header-delete">Delete</span>
+                    </div>
+                    <div class="product-items" id="productItems">
+                        <!-- Product rows will be rendered here by product.js -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/product-list.js"></script>
+</body>
+</html> 
