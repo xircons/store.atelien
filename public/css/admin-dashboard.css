@@ -1,0 +1,131 @@
+/* Admin Dashboard Styles - Minimal, Clean, Grayscale */
+body {
+  background: #fff;
+  color: #111;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 220px;
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  padding: 32px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sidebar-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 2.5rem;
+  color: #000;
+}
+.nav-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+.nav-item {
+  padding: 16px 32px;
+  font-size: 1rem;
+  color: #222;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.2s, border-color 0.2s;
+  letter-spacing: 1px;
+}
+.nav-item.active {
+  background: #f4f4f4;
+  border-left: 3px solid #111;
+  color: #000;
+  font-weight: 500;
+}
+.nav-item:hover {
+  background: #f4f4f4;
+}
+.main-content {
+  flex: 1;
+  padding: 48px 40px 32px 40px;
+  background: #fff;
+  min-width: 0;
+}
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  margin-bottom: 2rem;
+}
+th, td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 0.98rem;
+}
+th {
+  font-weight: 500;
+  color: #111;
+  background: #fafafa;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+/* Soft border radius for tables */
+table, th, td {
+  border-radius: 6px;
+}
+/* Responsive Design */
+@media (max-width: 900px) {
+  .admin-dashboard {
+    flex-direction: column;
+  }
+  .sidebar {
+    flex-direction: row;
+    width: 100%;
+    height: 60px;
+    padding: 0;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .sidebar-title {
+    display: none;
+  }
+  .nav-list {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .nav-item {
+    padding: 0 18px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  .nav-item.active {
+    border-bottom: 3px solid #111;
+    background: #f4f4f4;
+  }
+}
+@media (max-width: 600px) {
+  .main-content {
+    padding: 24px 8px 16px 8px;
+  }
+  th, td {
+    padding: 10px 4px;
+    font-size: 0.92rem;
+  }
+}
+/* Add more styles as needed for forms/buttons */ 

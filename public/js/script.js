@@ -65,16 +65,42 @@ function checkForCheckoutRedirect() {
     }
 }
 
+// Admin button injection logic
+function injectAdminButton() {
+    if (!window.auth || !window.auth.initPromise) return;
+    window.auth.initPromise.then(() => {
+        const user = window.auth.getCurrentUser && window.auth.getCurrentUser();
+        if (user && user.role === 'admin') {
+            // Find nav-left
+            const navLeft = document.querySelector('.nav-left .nav-menu');
+            if (navLeft && !document.getElementById('adminMenuBtn')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.href = '/admin_menu/index.html';
+                adminBtn.className = 'nav-item';
+                adminBtn.id = 'adminMenuBtn';
+                adminBtn.textContent = 'Admin';
+                navLeft.appendChild(adminBtn);
+            }
+        } else {
+            // Remove admin button if present
+            const existing = document.getElementById('adminMenuBtn');
+            if (existing) existing.remove();
+        }
+    });
+}
+
 // Initialize video when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initializeVideo();
         checkForCheckoutRedirect();
+        injectAdminButton();
     });
 } else {
     // DOM is already ready
     initializeVideo();
     checkForCheckoutRedirect();
+    injectAdminButton();
 }
 
 // Also initialize video when page becomes visible (for when navigating back)
