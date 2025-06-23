@@ -316,16 +316,10 @@ body {
 .product-status i,
 .product-edit i,
 .product-delete i {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s ease;
     padding: 0.5rem;
-}
-
-.product-status i:hover,
-.product-edit i:hover,
-.product-delete i:hover {
-    background: #f3f4f6;
 }
 
 /* Status toggle specific styles */

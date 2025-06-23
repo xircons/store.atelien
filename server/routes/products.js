@@ -35,10 +35,12 @@ router.get('/', (req, res) => {
             name: product.name,
             description: product.description,
             price: product.price,
+            cost_price: product.cost_price,
             category: product.category,
             image: product.image,
             image_hover: product.image_hover,
             maker: product.maker,
+            lead_time: product.lead_time,
             status: product.status
         }));
         
@@ -75,6 +77,7 @@ router.get('/:id', (req, res) => {
             name: product.name,
             description: product.description,
             price: product.price,
+            cost_price: product.cost_price,
             category: product.category,
             image: product.image,
             image_hover: product.image_hover,
@@ -151,6 +154,81 @@ router.delete('/:id', (req, res) => {
         console.log('=== END SERVER DEBUG ===');
         
         res.json({ message: 'Product deleted successfully' });
+    });
+});
+
+// Create new product
+router.post('/', (req, res) => {
+    console.log('=== ROUTE CALLED ===');
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
+    console.log('Request headers:', req.headers);
+    
+    const { name, description, price, cost_price, category, image, image_hover, maker, lead_time } = req.body;
+    
+    // Debug logging
+    console.log('=== CREATE PRODUCT DEBUG ===');
+    console.log('Received data:', req.body);
+    console.log('cost_price value:', cost_price);
+    console.log('cost_price type:', typeof cost_price);
+    console.log('cost_price === null:', cost_price === null);
+    console.log('cost_price === undefined:', cost_price === undefined);
+    console.log('cost_price === "":', cost_price === "");
+    console.log('cost_price === "0":', cost_price === "0");
+    console.log('cost_price === 0:', cost_price === 0);
+    console.log('===========================');
+    
+    // Validate required fields
+    if (!name || !description || !price || !category) {
+        return res.status(400).json({ error: 'Name, description, price, and category are required' });
+    }
+    
+    // Validate category enum values
+    const validCategories = ['seating', 'tables', 'lighting', 'storage', 'accessories'];
+    if (!validCategories.includes(category)) {
+        return res.status(400).json({ error: 'Invalid category. Must be one of: ' + validCategories.join(', ') });
+    }
+    
+    // Validate price is a positive number
+    if (isNaN(price) || parseFloat(price) < 0) {
+        return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+    
+    // Validate cost_price if provided
+    if (cost_price !== undefined && cost_price !== null && cost_price !== '') {
+        if (isNaN(cost_price) || parseFloat(cost_price) < 0) {
+            return res.status(400).json({ error: 'Cost price must be a positive number' });
+        }
+    }
+    
+    const query = `
+        INSERT INTO products (id, name, description, price, cost_price, category, image, image_hover, maker, lead_time, created_at, status)
+        VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), 'enable')
+    `;
+    
+    const params = [name, description, price, cost_price || null, category, image || null, image_hover || null, maker || null, lead_time || null];
+    
+    console.log('SQL Query:', query);
+    console.log('Parameters:', params);
+    console.log('Parameter types:', params.map(p => typeof p));
+    
+    db.query(query, params, (err, results) => {
+        console.log('=== DATABASE QUERY RESULT ===');
+        console.log('Error:', err);
+        console.log('Results:', results);
+        console.log('============================');
+        
+        if (err) {
+            console.error('Error creating product:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        console.log('Product created successfully with ID:', results.insertId);
+        
+        res.status(201).json({ 
+            message: 'Product created successfully',
+            productId: results.insertId
+        });
     });
 });
 
