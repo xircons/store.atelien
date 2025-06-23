@@ -1,0 +1,23 @@
+Copyright (c) 2025 [Wuttikan Suksan]
+
+All Rights Reserved.
+
+This project is intended for educational use only. By accessing or using this project, you agree to the following terms:
+
+You ARE allowed to:
+- View and study this code.
+- Modify it on your personal computer for academic or portfolio purposes only.
+
+You are NOT allowed to:
+- Redistribute this code or any part of it.
+- Sell, license, or use this project commercially.
+- Claim ownership of any images or content used in this project.
+- Host this project publicly as a working e-commerce website.
+
+Third-Party Content:
+Product images are sourced from [https://store.leibal.com](https://store.leibal.com) and are the property of their respective owners.  
+They are used under fair use for academic demonstration purposes only and may not be reused for any other purpose.
+
+If you are the copyright holder of any content and wish for it to be removed or credited differently, please contact me.
+
+By continuing to use or view this project, you agree to these terms.

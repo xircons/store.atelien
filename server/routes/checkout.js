@@ -114,30 +114,50 @@ router.post('/', requireAuth, (req, res) => {
 
 // GET /api/checkout/orders - Get user's orders
 router.get('/orders', requireAuth, (req, res) => {
-    const query = `
-        SELECT id, status, total, created_at, shipping_info, items
-        FROM orders 
-        WHERE user_id = ? 
-        ORDER BY created_at DESC
-    `;
-    
-    db.query(query, [req.user.id], (error, orders) => {
-        if (error) {
-            console.error('Error fetching orders:', error);
-            return res.status(500).json({ error: 'Failed to fetch orders' });
-        }
+    // Check if user is admin - if so, return all orders
+    if (req.user.role === 'admin') {
+        const query = `
+            SELECT o.*, u.email as user_email
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.id
+            ORDER BY o.created_at DESC
+        `;
         
-        res.json({
-            orders: orders.map(order => ({
-                id: order.id,
-                status: order.status,
-                total: order.total,
-                createdAt: order.created_at,
-                shipping: JSON.parse(order.shipping_info),
-                items: JSON.parse(order.items)
-            }))
+        db.query(query, (error, orders) => {
+            if (error) {
+                console.error('Error fetching all orders:', error);
+                return res.status(500).json({ error: 'Failed to fetch orders' });
+            }
+            
+            res.json(orders);
         });
-    });
+    } else {
+        // Regular user - return only their orders
+        const query = `
+            SELECT id, status, total, created_at, shipping_info, items
+            FROM orders 
+            WHERE user_id = ? 
+            ORDER BY created_at DESC
+        `;
+        
+        db.query(query, [req.user.id], (error, orders) => {
+            if (error) {
+                console.error('Error fetching orders:', error);
+                return res.status(500).json({ error: 'Failed to fetch orders' });
+            }
+            
+            res.json({
+                orders: orders.map(order => ({
+                    id: order.id,
+                    status: order.status,
+                    total: order.total,
+                    createdAt: order.created_at,
+                    shipping: JSON.parse(order.shipping_info),
+                    items: JSON.parse(order.items)
+                }))
+            });
+        });
+    }
 });
 
 // GET /api/checkout/orders/:id - Get specific order

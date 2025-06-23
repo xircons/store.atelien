@@ -1,3 +1,22 @@
+/* Global cross-platform form element reset */
+* {
+  box-sizing: border-box;
+}
+
+/* Reset all form elements for cross-platform consistency */
+input, select, textarea, button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: "Jost", sans-serif;
   font-weight: 300;
@@ -221,6 +240,24 @@ input, select {
   font-size: 1rem;
   background: #fff;
   transition: all 0.3s ease;
+  
+  /* Cross-platform appearance reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 input:focus, select:focus {
   outline: none;
@@ -254,6 +291,24 @@ input:focus, select:focus {
   position: relative;
   transition: all 0.2s ease;
   margin-bottom: 0;
+  
+  /* Cross-platform appearance reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .shipping-option input[type="radio"] {
@@ -334,6 +389,24 @@ input:focus, select:focus {
   border: 1px solid #e0e0e0;
   padding: 8px 12px;
   flex: 0 0 75%;
+  
+  /* Cross-platform appearance reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .discount-row input:focus {
@@ -352,6 +425,24 @@ input:focus, select:focus {
   font-size: 0.85rem;
   font-weight: 400;
   transition: all 0.2s ease;
+  
+  /* Cross-platform appearance reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .discount-row button:hover:not(:disabled) {
@@ -431,6 +522,24 @@ input:focus, select:focus {
   margin-top: 2rem;
   cursor: pointer;
   transition: background 0.2s;
+  
+  /* Cross-platform appearance reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 .continue-btn:hover {
   background: #fff;
@@ -464,9 +573,24 @@ input:focus, select:focus {
   box-sizing: border-box;
   text-align: center;
   line-height: 48px;
+  
+  /* Cross-platform appearance reset */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  
+  /* Cross-platform border-radius reset */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  
+  /* Additional cross-platform resets */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  
+  /* Remove default focus styles */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Custom Arrow for Select */

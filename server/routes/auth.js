@@ -207,6 +207,35 @@ router.get('/status', (req, res) => {
     }
 });
 
+// Get all users (admin only)
+router.get('/users', (req, res) => {
+    const token = req.cookies.authToken;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        
+        if (decoded.role !== 'admin') {
+            return res.status(403).json({ error: 'Admin access required' });
+        }
+        
+        db.query('SELECT id, email, role, created_at FROM users ORDER BY created_at DESC', (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+            
+            res.json(results);
+        });
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(401).json({ error: 'Invalid token' });
+    }
+});
+
 // Get user profile (protected route)
 router.get('/profile', (req, res) => {
     // This would be protected by middleware in a real app

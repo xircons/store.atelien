@@ -173,6 +173,7 @@ class Auth {
     updateUI() {
         const loginLink = document.querySelector('a[href="login.html"]');
         const cartLink = document.querySelector('a[href="cart.html"]');
+        const navRight = document.querySelector('.nav-right');
         
         if (this.isLoggedIn) {
             // User is logged in

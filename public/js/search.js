@@ -16,19 +16,19 @@ class ProductSearch {
         this.searchQuery = params.get('search') || '';
         this.currentCollection = params.get('collection') || 'all';
         
-        // Load all products
-        await this.loadAllProducts();
-        
-        // Apply search if query exists
+        // Only proceed with search functionality if there's a search query
         if (this.searchQuery) {
+            // Load all products
+            await this.loadAllProducts();
+            
+            // Apply search if query exists
             this.isSearchMode = true;
             this.performSearch(this.searchQuery);
-        } else {
-            this.displayProducts(this.allProducts);
+            
+            // Set up event listeners
+            this.setupEventListeners();
         }
-        
-        // Set up event listeners
-        this.setupEventListeners();
+        // If no search query, let collections.js handle the display
     }
 
     async loadAllProducts() {

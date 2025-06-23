@@ -4,6 +4,42 @@ function getCartKey() {
     return userId ? `cart_${userId}` : 'cart_guest';
 }
 
+// Function to show cart alerts
+function showCartAlert(message) {
+    // Create alert element if it doesn't exist
+    let alert = document.getElementById('checkoutAlert');
+    if (!alert) {
+        alert = document.createElement('div');
+        alert.id = 'checkoutAlert';
+        alert.className = 'checkout-alert';
+        alert.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2a2a2a;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 4px;
+            z-index: 10000;
+            font-size: 14px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        document.body.appendChild(alert);
+    }
+    
+    // Set message and show alert
+    alert.textContent = message;
+    alert.style.transform = 'translateX(0)';
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        alert.style.transform = 'translateX(100%)';
+    }, 3000);
+}
+
 // Dummy cart data for demonstration
 const cartItems = [
   {
@@ -226,34 +262,73 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Simple discount logic - you can expand this
-    if (code.toLowerCase() === 'save100') {
-      if (discountApplied) {
-        showCartAlert('Discount already applied!');
-        return;
-      }
-      
-      discountAmount = 100.00;
-      discountApplied = true;
-      calculateSummary();
-      discountCodeInput.disabled = true;
-      applyDiscountBtn.disabled = true;
-      showCartAlert('Discount applied! $100.00 off your order.');
-    } else if (code.toLowerCase() === 'atelien') {
-      if (discountApplied) {
-        showCartAlert('Discount already applied!');
-        return;
-      }
-      
-      discountAmount = 650.00;
-      discountApplied = true;
-      calculateSummary();
-      discountCodeInput.disabled = true;
-      applyDiscountBtn.disabled = true;
-      showCartAlert('Discount applied! $650.00 off your order.');
-    } else {
-      showCartAlert('Invalid discount code.');
+    if (discountApplied) {
+      showCartAlert('Discount already applied!');
+      return;
     }
+
+    // Get current subtotal for validation
+    const subtotalAmount = cartData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    console.log('Applying discount:', { code, subtotalAmount });
+
+    // Call the API to validate and apply discount
+    fetch('/api/discounts/apply', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        code: code,
+        subtotal: subtotalAmount
+      })
+    })
+    .then(response => {
+      console.log('Discount response status:', response.status);
+      if (!response.ok) {
+        return response.json().then(data => {
+          console.log('Discount error response:', data);
+          throw new Error(data.error || 'Failed to apply discount code');
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Discount success response:', data);
+      console.log('discountAmount type:', typeof data.coupon.discountAmount);
+      console.log('discountAmount value:', data.coupon.discountAmount);
+      
+      if (data.success && data.coupon) {
+        // Convert discountAmount to number to ensure toFixed() works
+        discountAmount = parseFloat(data.coupon.discountAmount);
+        console.log('Parsed discountAmount:', discountAmount);
+        console.log('discountAmount type after parseFloat:', typeof discountAmount);
+        
+        discountApplied = true;
+        calculateSummary();
+        discountCodeInput.disabled = true;
+        applyDiscountBtn.disabled = true;
+        
+        // Show success message with discount details
+        const discountText = data.coupon.discountType === 'percentage' 
+          ? `${data.coupon.discountValue}% off` 
+          : `$${discountAmount.toFixed(2)} off`;
+        
+        const message = data.coupon.description 
+          ? `Discount applied! ${discountText} - ${data.coupon.description}`
+          : `Discount applied! ${discountText}`;
+          
+        showCartAlert(message);
+      } else {
+        console.log('Discount response missing success or coupon:', data);
+        showCartAlert(data.error || 'Failed to apply discount code.');
+      }
+    })
+    .catch(error => {
+      console.error('Error applying discount:', error);
+      showCartAlert(error.message || 'Failed to apply discount code. Please try again.');
+    });
   }
 
   function validateForm() {
@@ -388,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Redirect to a thank you page or home page after a short delay
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/?fromCheckout=true';
         }, 2000);
       } else {
         showCartAlert(data.message || 'Checkout failed. Please try again.');
