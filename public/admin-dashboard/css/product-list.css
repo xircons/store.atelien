@@ -553,7 +553,7 @@ body {
 /* --- Coupon List 10-column grid (scoped to coupon-list.html) --- */
 .coupon-list-page .product-items-header,
 .coupon-list-page .product-row {
-    grid-template-columns: 1.2fr 2fr 1fr 1.4fr 1.2fr 1fr 1fr 100px 80px 80px;
+    grid-template-columns: 1.2fr 2fr 1fr 2fr 1fr 1fr 1fr 0.8fr 0.8fr 0.8fr;
     color: #2a2a2a;
 }
 /* End Coupon List grid */

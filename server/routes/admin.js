@@ -122,16 +122,10 @@ router.get('/export/coupons', async (req, res) => {
         });
         const wb = XLSX.utils.book_new();
         if (coupons && coupons.length > 0) {
-            // Convert all date/time-like fields to string and set wide columns
-            const dateLike = name => /date|time|expires|created_at|updated_at/i.test(name);
-            coupons.forEach(row => {
-                Object.keys(row).forEach(key => {
-                    if (dateLike(key) && row[key]) row[key] = String(row[key]);
-                });
-            });
             const couponSheet = XLSX.utils.json_to_sheet(coupons);
+            // Set column widths
             couponSheet['!cols'] = Object.keys(coupons[0]).map(key =>
-                dateLike(key) ? { wch: 30 } : { wch: 12 }
+                key === 'created_at' ? { wch: 22 } : { wch: 12 }
             );
             XLSX.utils.book_append_sheet(wb, couponSheet, 'Coupons');
         }
@@ -156,14 +150,10 @@ router.get('/export/products', async (req, res) => {
         });
         const wb = XLSX.utils.book_new();
         if (products && products.length > 0) {
-            // Convert date fields to string
-            products.forEach(row => {
-                if (row.created_at) row.created_at = String(row.created_at);
-                if (row.updated_at) row.updated_at = String(row.updated_at);
-            });
             const productSheet = XLSX.utils.json_to_sheet(products);
+            // Set column widths
             productSheet['!cols'] = Object.keys(products[0]).map(key =>
-                (key === 'created_at' || key === 'updated_at') ? { wch: 30 } : { wch: 12 }
+                key === 'created_at' ? { wch: 22 } : { wch: 12 }
             );
             XLSX.utils.book_append_sheet(wb, productSheet, 'Products');
         }
