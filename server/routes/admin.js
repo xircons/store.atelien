@@ -167,4 +167,70 @@ router.get('/export/products', async (req, res) => {
     }
 });
 
+// --- Dashboard Analytics ---
+
+// GET /api/admin/monthly-stats?years=2024,2025
+router.get('/monthly-stats', (req, res) => {
+    let years = req.query.years;
+    if (!years) {
+        years = [new Date().getFullYear()];
+    } else {
+        years = years.split(',').map(y => parseInt(y.trim())).filter(Boolean);
+    }
+    if (!years.length) years = [new Date().getFullYear()];
+    db.query(
+        'SELECT metric, year, month, value FROM monthly_stats WHERE year IN (?) ORDER BY year, metric, month',
+        [years],
+        (err, results) => {
+            if (err) return res.status(500).json({ error: 'Database error' });
+            // Prepare data for each year and metric
+            const data = {};
+            years.forEach(y => {
+                data[y] = { revenue: Array(12).fill(0), orders: Array(12).fill(0), users: Array(12).fill(0) };
+            });
+            results.forEach(row => {
+                if (data[row.year] && data[row.year][row.metric] && row.month >= 1 && row.month <= 12) {
+                    data[row.year][row.metric][row.month - 1] = row.value;
+                }
+            });
+            res.json(data);
+        }
+    );
+});
+
+// GET /api/admin/top-products?year=2025&month=12
+router.get('/top-products', (req, res) => {
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const month = parseInt(req.query.month) || (new Date().getMonth() + 1);
+    // Get top 6 products for the given month, with previous month for growth
+    const sql = `
+        SELECT p.id as product_id, p.name, p.image, h.units_sold,
+            ROUND(
+                CASE WHEN prev.units_sold IS NULL OR prev.units_sold = 0 THEN NULL
+                ELSE (h.units_sold - prev.units_sold) / prev.units_sold END, 4
+            ) AS growth
+        FROM product_sales_history h
+        JOIN products p ON h.product_id = p.id
+        LEFT JOIN product_sales_history prev
+            ON prev.product_id = h.product_id AND prev.year = h.year AND prev.month = h.month - 1
+        WHERE h.year = ? AND h.month = ?
+        ORDER BY p.image
+        LIMIT 6
+    `;
+    db.query(sql, [year, month], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        // Map image to full URL if needed
+        const products = results.map(row => ({
+            product_id: row.product_id,
+            name: row.name,
+            image_url: row.image && (row.image.startsWith('http://') || row.image.startsWith('https://'))
+                ? row.image
+                : (row.image ? `/public/images/product/${row.image}` : '/public/images/product/default-fallback-image.png'),
+            units_sold: row.units_sold,
+            growth: row.growth !== null ? row.growth : null
+        }));
+        res.json(products);
+    });
+});
+
 module.exports = router; 

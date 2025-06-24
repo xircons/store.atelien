@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2025 at 11:09 AM
+-- Generation Time: Jun 24, 2025 at 01:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -53,13 +53,70 @@ INSERT INTO `discount_coupons` (`id`, `code`, `description`, `discount_type`, `d
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `monthly_stats`
+--
+
+CREATE TABLE `monthly_stats` (
+  `id` int(11) NOT NULL,
+  `metric` enum('revenue','orders','users') NOT NULL,
+  `year` int(11) NOT NULL,
+  `month` int(11) NOT NULL,
+  `value` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `monthly_stats`
+--
+
+INSERT INTO `monthly_stats` (`id`, `metric`, `year`, `month`, `value`, `created_at`) VALUES
+(1, 'revenue', 2025, 1, 22061, '2025-06-24 10:56:49'),
+(2, 'orders', 2025, 1, 367, '2025-06-24 10:56:49'),
+(3, 'users', 2025, 1, 210, '2025-06-24 10:56:49'),
+(4, 'revenue', 2025, 2, 37156, '2025-06-24 10:56:49'),
+(5, 'orders', 2025, 2, 382, '2025-06-24 10:56:49'),
+(6, 'users', 2025, 2, 248, '2025-06-24 10:56:49'),
+(7, 'revenue', 2025, 3, 37939, '2025-06-24 10:56:49'),
+(8, 'orders', 2025, 3, 127, '2025-06-24 10:56:49'),
+(9, 'users', 2025, 3, 260, '2025-06-24 10:56:49'),
+(10, 'revenue', 2025, 4, 25337, '2025-06-24 10:56:49'),
+(11, 'orders', 2025, 4, 206, '2025-06-24 10:56:49'),
+(12, 'users', 2025, 4, 54, '2025-06-24 10:56:49'),
+(13, 'revenue', 2025, 5, 25145, '2025-06-24 10:56:49'),
+(14, 'orders', 2025, 5, 497, '2025-06-24 10:56:49'),
+(15, 'users', 2025, 5, 246, '2025-06-24 10:56:49'),
+(16, 'revenue', 2025, 6, 43348, '2025-06-24 10:56:49'),
+(17, 'orders', 2025, 6, 248, '2025-06-24 10:56:49'),
+(18, 'users', 2025, 6, 297, '2025-06-24 10:56:49'),
+(19, 'revenue', 2025, 7, 32241, '2025-06-24 10:56:49'),
+(20, 'orders', 2025, 7, 286, '2025-06-24 10:56:49'),
+(21, 'users', 2025, 7, 91, '2025-06-24 10:56:49'),
+(22, 'revenue', 2025, 8, 36611, '2025-06-24 10:56:49'),
+(23, 'orders', 2025, 8, 383, '2025-06-24 10:56:49'),
+(24, 'users', 2025, 8, 189, '2025-06-24 10:56:49'),
+(25, 'revenue', 2025, 9, 29126, '2025-06-24 10:56:49'),
+(26, 'orders', 2025, 9, 105, '2025-06-24 10:56:49'),
+(27, 'users', 2025, 9, 168, '2025-06-24 10:56:49'),
+(28, 'revenue', 2025, 10, 43704, '2025-06-24 10:56:49'),
+(29, 'orders', 2025, 10, 107, '2025-06-24 10:56:49'),
+(30, 'users', 2025, 10, 133, '2025-06-24 10:56:49'),
+(31, 'revenue', 2025, 11, 26215, '2025-06-24 10:56:49'),
+(32, 'orders', 2025, 11, 335, '2025-06-24 10:56:49'),
+(33, 'users', 2025, 11, 120, '2025-06-24 10:56:49'),
+(34, 'revenue', 2025, 12, 26119, '2025-06-24 10:56:49'),
+(35, 'orders', 2025, 12, 423, '2025-06-24 10:56:49'),
+(36, 'users', 2025, 12, 269, '2025-06-24 10:56:49');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `status` varchar(50) NOT NULL DEFAULT 'pending',
+  `status` enum('pending','paid','failed','cancelled') NOT NULL DEFAULT 'pending',
   `shipping_info` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`shipping_info`)),
   `shipping_method` varchar(50) NOT NULL,
   `discount_code` varchar(50) DEFAULT NULL,
@@ -166,6 +223,99 @@ INSERT INTO `products` (`id`, `name`, `description`, `price`, `cost_price`, `cat
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `product_sales_history`
+--
+
+CREATE TABLE `product_sales_history` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `month` int(11) NOT NULL,
+  `units_sold` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `product_sales_history`
+--
+
+INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units_sold`, `created_at`) VALUES
+(1, 1, 2025, 1, 38, '2025-01-24 17:00:00'),
+(2, 2, 2025, 1, 66, '2025-01-06 17:00:00'),
+(3, 3, 2025, 1, 77, '2025-01-13 17:00:00'),
+(4, 4, 2025, 1, 144, '2025-01-02 17:00:00'),
+(5, 5, 2025, 1, 77, '2025-01-19 17:00:00'),
+(6, 6, 2025, 1, 89, '2025-01-18 17:00:00'),
+(7, 1, 2025, 2, 29, '2025-02-16 17:00:00'),
+(8, 2, 2025, 2, 69, '2025-02-26 17:00:00'),
+(9, 3, 2025, 2, 155, '2025-02-25 17:00:00'),
+(10, 4, 2025, 2, 196, '2025-02-03 17:00:00'),
+(11, 5, 2025, 2, 164, '2025-02-15 17:00:00'),
+(12, 6, 2025, 2, 59, '2025-02-01 17:00:00'),
+(13, 1, 2025, 3, 77, '2025-03-10 17:00:00'),
+(14, 2, 2025, 3, 31, '2025-03-01 17:00:00'),
+(15, 3, 2025, 3, 53, '2025-03-11 17:00:00'),
+(16, 4, 2025, 3, 105, '2025-03-08 17:00:00'),
+(17, 5, 2025, 3, 46, '2025-03-04 17:00:00'),
+(18, 6, 2025, 3, 96, '2025-03-08 17:00:00'),
+(19, 1, 2025, 4, 177, '2025-04-05 17:00:00'),
+(20, 2, 2025, 4, 186, '2025-04-10 17:00:00'),
+(21, 3, 2025, 4, 148, '2025-04-12 17:00:00'),
+(22, 4, 2025, 4, 83, '2025-04-10 17:00:00'),
+(23, 5, 2025, 4, 176, '2025-04-04 17:00:00'),
+(24, 6, 2025, 4, 178, '2025-04-11 17:00:00'),
+(25, 1, 2025, 5, 66, '2025-05-21 17:00:00'),
+(26, 2, 2025, 5, 174, '2025-05-19 17:00:00'),
+(27, 3, 2025, 5, 134, '2025-05-23 17:00:00'),
+(28, 4, 2025, 5, 196, '2025-05-14 17:00:00'),
+(29, 5, 2025, 5, 84, '2025-05-11 17:00:00'),
+(30, 6, 2025, 5, 143, '2025-05-07 17:00:00'),
+(31, 1, 2025, 6, 123, '2025-06-18 17:00:00'),
+(32, 2, 2025, 6, 120, '2025-06-04 17:00:00'),
+(33, 3, 2025, 6, 120, '2025-06-21 17:00:00'),
+(34, 4, 2025, 6, 81, '2025-06-10 17:00:00'),
+(35, 5, 2025, 6, 128, '2025-06-24 17:00:00'),
+(36, 6, 2025, 6, 185, '2025-06-27 17:00:00'),
+(37, 1, 2025, 7, 191, '2025-07-04 17:00:00'),
+(38, 2, 2025, 7, 91, '2025-07-27 17:00:00'),
+(39, 3, 2025, 7, 55, '2025-07-02 17:00:00'),
+(40, 4, 2025, 7, 196, '2025-07-24 17:00:00'),
+(41, 5, 2025, 7, 21, '2025-07-09 17:00:00'),
+(42, 6, 2025, 7, 80, '2025-07-26 17:00:00'),
+(43, 1, 2025, 8, 48, '2025-08-12 17:00:00'),
+(44, 2, 2025, 8, 150, '2025-08-12 17:00:00'),
+(45, 3, 2025, 8, 128, '2025-08-25 17:00:00'),
+(46, 4, 2025, 8, 68, '2025-08-25 17:00:00'),
+(47, 5, 2025, 8, 63, '2025-08-17 17:00:00'),
+(48, 6, 2025, 8, 189, '2025-08-01 17:00:00'),
+(49, 1, 2025, 9, 52, '2025-09-26 17:00:00'),
+(50, 2, 2025, 9, 199, '2025-09-19 17:00:00'),
+(51, 3, 2025, 9, 55, '2025-09-09 17:00:00'),
+(52, 4, 2025, 9, 164, '2025-09-09 17:00:00'),
+(53, 5, 2025, 9, 157, '2025-09-15 17:00:00'),
+(54, 6, 2025, 9, 86, '2025-09-06 17:00:00'),
+(55, 1, 2025, 10, 79, '2025-10-21 17:00:00'),
+(56, 2, 2025, 10, 200, '2025-10-11 17:00:00'),
+(57, 3, 2025, 10, 178, '2025-10-02 17:00:00'),
+(58, 4, 2025, 10, 177, '2025-10-12 17:00:00'),
+(59, 5, 2025, 10, 193, '2025-10-07 17:00:00'),
+(60, 6, 2025, 10, 102, '2025-10-15 17:00:00'),
+(61, 1, 2025, 11, 108, '2025-11-27 17:00:00'),
+(62, 2, 2025, 11, 160, '2025-11-24 17:00:00'),
+(63, 3, 2025, 11, 23, '2025-11-12 17:00:00'),
+(64, 4, 2025, 11, 118, '2025-11-25 17:00:00'),
+(65, 5, 2025, 11, 29, '2025-11-21 17:00:00'),
+(66, 6, 2025, 11, 132, '2025-11-16 17:00:00'),
+(67, 1, 2025, 12, 154, '2025-12-25 17:00:00'),
+(68, 2, 2025, 12, 145, '2025-12-18 17:00:00'),
+(69, 3, 2025, 12, 99, '2025-12-10 17:00:00'),
+(70, 4, 2025, 12, 62, '2025-11-30 17:00:00'),
+(71, 5, 2025, 12, 55, '2025-12-16 17:00:00'),
+(72, 6, 2025, 12, 100, '2025-12-24 17:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -199,6 +349,12 @@ ALTER TABLE `discount_coupons`
   ADD UNIQUE KEY `code` (`code`);
 
 --
+-- Indexes for table `monthly_stats`
+--
+ALTER TABLE `monthly_stats`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -214,6 +370,13 @@ ALTER TABLE `products`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_category` (`category`),
   ADD KEY `idx_name` (`name`);
+
+--
+-- Indexes for table `product_sales_history`
+--
+ALTER TABLE `product_sales_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_id` (`product_id`);
 
 --
 -- Indexes for table `users`
@@ -234,6 +397,12 @@ ALTER TABLE `discount_coupons`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `monthly_stats`
+--
+ALTER TABLE `monthly_stats`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
@@ -244,6 +413,12 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=567;
+
+--
+-- AUTO_INCREMENT for table `product_sales_history`
+--
+ALTER TABLE `product_sales_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -260,6 +435,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `product_sales_history`
+--
+ALTER TABLE `product_sales_history`
+  ADD CONSTRAINT `product_sales_history_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

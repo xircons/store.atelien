@@ -24,23 +24,30 @@
                     <h2 class="chart-title">Overview</h2>
                 </div>
                 <div class="stats-grid">
-                    <div class="stat-card active" id="statProfit" onclick="switchChart('profit')">
+                    <div class="stat-card active" id="statRevenue" onclick="switchChart('revenue')">
                         <h3>Total Revenue</h3>
                         <div class="value" id="totalRevenue">$485,600</div>
-                        <div class="change positive" id="revenueChange">+12.5% from last month</div>
+                        <div class="change positive" id="revenueChange">+12.5% from last year</div>
                     </div>
                     <div class="stat-card" id="statOrders" onclick="switchChart('orders')">
                         <h3>Total Orders</h3>
                         <div class="value" id="totalOrders">5,870</div>
-                        <div class="change positive" id="ordersChange">+8.3% from last month</div>
+                        <div class="change positive" id="ordersChange">+8.3% from last year</div>
                     </div>
                     <div class="stat-card" id="statUsers" onclick="switchChart('users')">
                         <h3>New Users</h3>
                         <div class="value" id="totalUsers">1,234</div>
-                        <div class="change positive" id="usersChange">+5.2% from last month</div>
+                        <div class="change positive" id="usersChange">+5.2% from last year</div>
                     </div>
                 </div>
                 <div class="loading" id="loading">Loading chart data...</div>
+                <!-- Year toggle, centered above chart -->
+                <div class="year-toggle-row">
+                    <select id="yearToggle" class="year-badge">
+                        <option value="2025" selected>2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
                 <div class="chart-wrapper">
                     <canvas id="performanceChart"></canvas>
                 </div>
@@ -49,56 +56,7 @@
                 <div class="top-product-header">
                     <h3>Top product</h3>
                 </div>
-                <ul class="top-product-list">
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Maneki Neko Poster">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Maneki Neko Poster</div>
-                            <div class="top-product-sold">Sold: 1249</div>
-                        </div>
-                        <span class="top-product-badge positive">+15.2%</span>
-                    </li>
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Maneki Neko Poster">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Maneki Neko Poster</div>
-                            <div class="top-product-sold">Sold: 1249</div>
-                        </div>
-                        <span class="top-product-badge positive">+15.2%</span>
-                    </li>
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Spiky Ring">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Spiky Ring</div>
-                            <div class="top-product-sold">Sold: 1073</div>
-                        </div>
-                        <span class="top-product-badge positive">+9.5%</span>
-                    </li>
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Pastel Petals Poster">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Pastel Petals Poster</div>
-                            <div class="top-product-sold">Sold: 1022</div>
-                        </div>
-                        <span class="top-product-badge positive">+2.3%</span>
-                    </li>
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Il Limone">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Il Limone</div>
-                            <div class="top-product-sold">Sold: 992</div>
-                        </div>
-                        <span class="top-product-badge negative">-0.7%</span>
-                    </li>
-                    <li class="top-product-item">
-                        <img src="https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048" alt="Ringed Earring">
-                        <div class="top-product-info">
-                            <div class="top-product-name">Ringed Earring</div>
-                            <div class="top-product-sold">Sold: 1201</div>
-                        </div>
-                        <span class="top-product-badge negative">-1.1%</span>
-                    </li>
-                </ul>
+                <ul class="top-product-list" id="topProductList"></ul>
             </div>
         </div>
         <div class="recent-orders-container">
