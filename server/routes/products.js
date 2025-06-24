@@ -232,4 +232,81 @@ router.post('/', (req, res) => {
     });
 });
 
+// Update existing product
+router.put('/:id', (req, res) => {
+    const productId = req.params.id;
+    
+    console.log('=== UPDATE PRODUCT DEBUG ===');
+    console.log('Updating product ID:', productId);
+    console.log('Received data:', req.body);
+    
+    const { name, description, price, cost_price, category, image, image_hover, maker, lead_time } = req.body;
+    
+    // Validate required fields
+    if (!name || !description || !price || !category) {
+        return res.status(400).json({ error: 'Name, description, price, and category are required' });
+    }
+    
+    // Validate category enum values
+    const validCategories = ['seating', 'tables', 'lighting', 'storage', 'accessories'];
+    if (!validCategories.includes(category)) {
+        return res.status(400).json({ error: 'Invalid category. Must be one of: ' + validCategories.join(', ') });
+    }
+    
+    // Validate price is a positive number
+    if (isNaN(price) || parseFloat(price) < 0) {
+        return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+    
+    // Validate cost_price if provided
+    if (cost_price !== undefined && cost_price !== null && cost_price !== '') {
+        if (isNaN(cost_price) || parseFloat(cost_price) < 0) {
+            return res.status(400).json({ error: 'Cost price must be a positive number' });
+        }
+    }
+    
+    // First check if product exists
+    db.query('SELECT id FROM products WHERE id = ?', [productId], (err, results) => {
+        if (err) {
+            console.error('Error checking product existence:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        
+        // Update the product
+        const updateQuery = `
+            UPDATE products 
+            SET name = ?, description = ?, price = ?, cost_price = ?, category = ?, 
+                image = ?, image_hover = ?, maker = ?, lead_time = ?
+            WHERE id = ?
+        `;
+        
+        const updateParams = [
+            name, description, price, cost_price || null, category, 
+            image || null, image_hover || null, maker || null, lead_time || null, productId
+        ];
+        
+        console.log('Update SQL Query:', updateQuery);
+        console.log('Update Parameters:', updateParams);
+        
+        db.query(updateQuery, updateParams, (updateErr, updateResults) => {
+            if (updateErr) {
+                console.error('Error updating product:', updateErr);
+                return res.status(500).json({ error: 'Database error' });
+            }
+            
+            console.log('Product updated successfully');
+            console.log('=== END UPDATE PRODUCT DEBUG ===');
+            
+            res.json({ 
+                message: 'Product updated successfully',
+                productId: productId
+            });
+        });
+    });
+});
+
 module.exports = router;

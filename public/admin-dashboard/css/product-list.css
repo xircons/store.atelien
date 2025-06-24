@@ -41,6 +41,7 @@ body {
     background: #2a2a2a;
     color: #fff;
     border: none;
+    text-decoration: none;
 }
 .product-actions .btn.add:hover {
     font-weight: 400;
@@ -123,7 +124,6 @@ body {
 }
 .sales-bar {
     height: 6px;
-    border-radius: 4px;
     background: #f3f4f6;
     margin-top: 4px;
     width: 100px;
@@ -219,8 +219,6 @@ body {
 .product-items-section {
     margin-top: 32px;
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     max-width: 100%;
     overflow-x: auto;
 }
@@ -229,7 +227,7 @@ body {
     grid-template-columns: 2fr 1fr 1fr 100px 80px 80px;
     align-items: center;
     font-weight: 400;
-    color: #222;
+    color: #2a2a2a;
     font-size: 0.7rem;
     border-top: 1px solid rgba(6, 29, 27, 0.2);
     border-bottom: 1px solid rgba(6, 29, 27, 0.2);
@@ -303,7 +301,6 @@ body {
     grid-template-columns: 2fr 1fr 1fr 100px 80px 80px;
     align-items: center;
     background: #fff;
-    border-radius: 8px;
     padding: 1rem 0;
     margin-bottom: 0.5rem;
     max-width: 100%;
@@ -316,6 +313,7 @@ body {
 .product-status i,
 .product-edit i,
 .product-delete i {
+    color: #2a2a2a;
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -488,8 +486,6 @@ body {
     z-index: 2000;
     background: #fff;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    border-radius: 8px;
     width: fit-content;
     min-width: 180px;
     max-width: 90vw;
@@ -553,3 +549,49 @@ body {
         transform: translateX(100%); 
     }
 }
+
+/* --- Coupon List 10-column grid (scoped to coupon-list.html) --- */
+.coupon-list-page .product-items-header,
+.coupon-list-page .product-row {
+    grid-template-columns: 1.2fr 2fr 1fr 1.4fr 1.2fr 1fr 1fr 100px 80px 80px;
+    color: #2a2a2a;
+}
+/* End Coupon List grid */
+
+/* Coupon List: Table column font styles */
+.coupon-list-page .header-price,
+.coupon-list-page .header-category,
+.coupon-list-page .header-status,
+.coupon-list-page .header-min-order,
+.coupon-list-page .header-max-users,
+.coupon-list-page .header-used-count,
+.coupon-list-page .product-price,
+.coupon-list-page .product-category,
+.coupon-list-page .product-status,
+.coupon-list-page .header-min-order,
+.coupon-list-page .header-max-users,
+.coupon-list-page .header-used-count, 
+.coupon-list-page .product-card-title {
+    color: rgba(6, 29, 27, 0.8);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+.coupon-list-page .product-card-title {
+    color: #2a2a2a;
+}
+/* End Coupon List font styles */
+
+/* Coupon List: Align product-row cells */
+.coupon-list-page .product-row > span {
+    align-self: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+}
+.coupon-list-page .product-row > .product-status,
+.coupon-list-page .product-row > .product-edit,
+.coupon-list-page .product-row > .product-delete {
+    align-self: flex-start;
+    justify-content: center;
+    text-align: center;
+}
+/* End Coupon List alignment */

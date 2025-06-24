@@ -28,10 +28,10 @@
     <main class="main-container">
         <div class="create-product-outer">
             <header class="page-header">
-                <h1 class="create-product-title">Create New Product</h1>
+                <h1 class="create-product-title">Edit Product</h1>
             </header>
 
-            <form id="createProductForm" autocomplete="off" class="product-form">
+            <form id="editProductForm" autocomplete="off" class="product-form">
                 <div class="form-layout">
                     <!-- Basic Information Section -->
                     <section class="basic-information-container card-section">
@@ -55,7 +55,7 @@
                         <div class="form-group">
                             <label for="category">Category <span class="required">*</span></label>
                             <select id="category" name="category" required>
-                                <option value="" disabled selected>Select category</option>
+                                <option value="" disabled>Select category</option>
                                 <option value="seating">Seating</option>
                                 <option value="tables">Tables</option>
                                 <option value="lighting">Lighting</option>
@@ -107,7 +107,7 @@
                         <!-- Submit Button -->
                         <div class="form-actions">
                             <button type="submit" class="create-btn">
-                                <span class="btn-text">Create Product</span>
+                                <span class="btn-text">Update Product</span>
                             </button>
                         </div>
                     </div>
@@ -127,7 +127,14 @@
     <!-- Mobile Navigation Overlay -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
 
-    <script src="js/create-product.js"></script>
+    <script src="js/edit-product.js"></script>
     <script src="js/sidebar-active.js"></script>
+    <style>
+    .product-alert {
+        font-weight: 300 !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+    }
+    </style>
 </body>
 </html> 

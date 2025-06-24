@@ -17,9 +17,7 @@ router.post('/validate', requireAuth, (req, res) => {
     const query = `
         SELECT * FROM discount_coupons 
         WHERE UPPER(code) = ? 
-        AND is_active = 1 
-        AND (valid_from IS NULL OR valid_from <= NOW())
-        AND (valid_until IS NULL OR valid_until >= NOW())
+        AND status = 'enable' 
         AND (max_uses IS NULL OR used_count < max_uses)
     `;
     
@@ -79,9 +77,7 @@ router.post('/apply', requireAuth, (req, res) => {
     const validateQuery = `
         SELECT * FROM discount_coupons 
         WHERE UPPER(code) = ? 
-        AND is_active = 1 
-        AND (valid_from IS NULL OR valid_from <= NOW())
-        AND (valid_until IS NULL OR valid_until >= NOW())
+        AND status = 'enable' 
         AND (max_uses IS NULL OR used_count < max_uses)
     `;
     
@@ -115,7 +111,12 @@ router.post('/apply', requireAuth, (req, res) => {
         // Increment usage count
         const updateQuery = `
             UPDATE discount_coupons 
-            SET used_count = used_count + 1, updated_at = NOW()
+            SET used_count = used_count + 1, 
+                updated_at = NOW(),
+                status = CASE 
+                    WHEN max_uses IS NOT NULL AND used_count + 1 >= max_uses THEN 'disable'
+                    ELSE status
+                END
             WHERE id = ?
         `;
         
@@ -174,9 +175,7 @@ router.get('/:id', requireAuth, (req, res) => {
                 minOrderAmount: coupon.min_order_amount,
                 maxUses: coupon.max_uses,
                 usedCount: coupon.used_count,
-                isActive: coupon.is_active,
-                validFrom: coupon.valid_from,
-                validUntil: coupon.valid_until,
+                isActive: coupon.status === 'enable',
                 createdAt: coupon.created_at,
                 updatedAt: coupon.updated_at
             }
@@ -212,9 +211,7 @@ router.get('/', requireAuth, (req, res) => {
                 minOrderAmount: coupon.min_order_amount,
                 maxUses: coupon.max_uses,
                 usedCount: coupon.used_count,
-                isActive: coupon.is_active,
-                validFrom: coupon.valid_from,
-                validUntil: coupon.valid_until,
+                isActive: coupon.status === 'enable',
                 createdAt: coupon.created_at,
                 updatedAt: coupon.updated_at
             }))
@@ -232,17 +229,15 @@ router.post('/', requireAuth, (req, res) => {
     const {
         code,
         description,
-        discountType,
-        discountValue,
-        minOrderAmount,
-        maxUses,
-        isActive,
-        validFrom,
-        validUntil
+        discount_type,
+        discount_value,
+        min_order_amount,
+        max_uses,
+        status
     } = req.body;
     
     // Validate required fields
-    if (!code || !discountType || !discountValue) {
+    if (!code || !discount_type || !discount_value) {
         return res.status(400).json({ error: 'Code, discount type, and discount value are required' });
     }
     
@@ -265,20 +260,18 @@ router.post('/', requireAuth, (req, res) => {
         const insertQuery = `
             INSERT INTO discount_coupons (
                 code, description, discount_type, discount_value, 
-                min_order_amount, max_uses, is_active, valid_from, valid_until
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                min_order_amount, max_uses, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
         
         const values = [
             upperCode,
             description || null,
-            discountType,
-            discountValue,
-            minOrderAmount || 0,
-            maxUses || null,
-            isActive !== undefined ? isActive : 1,
-            validFrom || null,
-            validUntil || null
+            discount_type,
+            discount_value,
+            min_order_amount || 0,
+            max_uses || null,
+            status !== undefined ? status : 'enable'
         ];
         
         db.query(insertQuery, values, (insertError, results) => {
@@ -307,13 +300,11 @@ router.put('/:id', requireAuth, (req, res) => {
     const {
         code,
         description,
-        discountType,
-        discountValue,
-        minOrderAmount,
-        maxUses,
-        isActive,
-        validFrom,
-        validUntil
+        discount_type,
+        discount_value,
+        min_order_amount,
+        max_uses,
+        status
     } = req.body;
     
     // Convert code to uppercase if provided
@@ -347,9 +338,7 @@ router.put('/:id', requireAuth, (req, res) => {
                 discount_value = COALESCE(?, discount_value),
                 min_order_amount = COALESCE(?, min_order_amount),
                 max_uses = ?,
-                is_active = COALESCE(?, is_active),
-                valid_from = ?,
-                valid_until = ?,
+                status = COALESCE(?, status),
                 updated_at = NOW()
             WHERE id = ?
         `;
@@ -357,13 +346,11 @@ router.put('/:id', requireAuth, (req, res) => {
         const values = [
             upperCode,
             description,
-            discountType,
-            discountValue,
-            minOrderAmount,
-            maxUses,
-            isActive,
-            validFrom,
-            validUntil,
+            discount_type,
+            discount_value,
+            min_order_amount,
+            max_uses,
+            status,
             couponId
         ];
         
@@ -401,6 +388,30 @@ router.delete('/:id', requireAuth, (req, res) => {
         res.json({
             success: true,
             message: 'Discount coupon deleted successfully'
+        });
+    });
+});
+
+// PUT /api/discounts/:id/toggle-status - Toggle coupon status (admin only)
+router.put('/:id/toggle-status', requireAuth, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Access denied. Admin only.' });
+    }
+    const couponId = req.params.id;
+    // Get current status
+    const getQuery = 'SELECT status FROM discount_coupons WHERE id = ?';
+    db.query(getQuery, [couponId], (err, results) => {
+        if (err || results.length === 0) {
+            return res.status(404).json({ error: 'Coupon not found' });
+        }
+        const currentStatus = results[0].status;
+        const newStatus = currentStatus === 'enable' ? 'disable' : 'enable';
+        const updateQuery = 'UPDATE discount_coupons SET status = ?, updated_at = NOW() WHERE id = ?';
+        db.query(updateQuery, [newStatus, couponId], (updateErr) => {
+            if (updateErr) {
+                return res.status(500).json({ error: 'Failed to update coupon status' });
+            }
+            res.json({ isActive: newStatus === 'enable' });
         });
     });
 });

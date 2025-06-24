@@ -47,7 +47,7 @@ body {
 /* Card Sections */
 .card-section {
     background: #fff;
-    padding: 1.5rem;
+    padding: 0 !important;
 }
 
 .card-section h2 {
@@ -346,4 +346,9 @@ select option {
     .create-btn {
         border: 2px solid #000;
     }
+}
+
+/* Padding for alert on create-coupon.html */
+.create-product-outer .product-alert {
+    padding: 0 !important;
 }

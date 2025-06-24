@@ -18,37 +18,41 @@
     });
     </script>
     <script src="js/sidebar-active.js"></script>
-        <main class="main-content">
+        <main class="main-content coupon-list-page">
             <div class="product-container">
                 <div class="product-header">
-                    <h2>Products</h2>
+                    <h2>Coupons</h2>
                     <div class="product-actions">
                         <button class="btn export">Export</button>
-                        <a href="create-product.html" class="btn add">Add products</a>
+                        <a href="create-coupon.html" class="btn add">Add coupon</a>
                     </div>
                 </div>
                 <div class="product-items-section">
                     <div class="product-items-header">
-                        <span class="header-product">Product</span>
-                        <span class="header-price">Price</span>
-                        <span class="header-category">Category</span>
+                        <span class="header-product">Code</span>
+                        <span class="header-price">Description</span>
+                        <span class="header-category">Discount Type</span>
+                        <span class="header-status">Discount Value</span>
+                        <span class="header-min-order">Min Order Amount</span>
+                        <span class="header-max-users">Max Users</span>
+                        <span class="header-used-count">Used Count</span>
                         <span class="header-status">Status</span>
                         <span class="header-edit">Edit</span>
                         <span class="header-delete">Delete</span>
                     </div>
-                    <div class="product-items" id="productItems">
-                        <!-- Product rows will be rendered here by product.js -->
+                    <div class="product-items" id="couponItems">
+                        <!-- Coupon rows will be rendered here by coupon-list.js -->
                     </div>
                 </div>
             </div>
         </main>
     </div>
-    <div class="product-alert" id="productAlert">
+    <div class="product-alert" id="couponAlert">
         <div class="alert-content">
-            <span class="alert-message" id="productAlertMessage"></span>
-            <button class="alert-close" id="productAlertClose">×</button>
+            <span class="alert-message" id="couponAlertMessage"></span>
+            <button class="alert-close" id="couponAlertClose">×</button>
         </div>
     </div>
-    <script src="js/product-list.js"></script>
+    <script src="js/coupon-list.js"></script>
 </body>
 </html> 

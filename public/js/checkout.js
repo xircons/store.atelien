@@ -44,16 +44,10 @@ function showCartAlert(message) {
 const cartItems = [
   {
     image: 'images/product/chair.webp',
-    title: 'Men Top Black Puffed Jacket',
-    desc: "Men's Black",
+    title: '...',
+    desc: "...",
     price: 999.00
   },
-  {
-    image: 'images/product/default-fallback-image.png',
-    title: 'Women Jacket',
-    desc: 'Women top',
-    price: 1200.00
-  }
 ];
 
 const taxes = 5.00;
@@ -158,6 +152,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Enhanced input restrictions
+  const nameFields = ['firstName', 'lastName', 'city'];
+  nameFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.addEventListener('input', function(e) {
+        // Remove any numbers
+        this.value = this.value.replace(/[0-9]/g, '');
+      });
+    }
+  });
+
+  // Zip: only numbers
+  const zipField = document.getElementById('zip');
+  if (zipField) {
+    zipField.addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
+  }
+
+  // Phone: only numbers, max 10 digits
+  const phoneField = document.getElementById('phone');
+  if (phoneField) {
+    phoneField.addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+    });
+  }
+
   function validateField() {
     const field = this;
     const value = field.value.trim();
@@ -177,6 +199,27 @@ document.addEventListener('DOMContentLoaded', () => {
         field.classList.remove('error');
       }
     }
+    
+    // Custom validation for name fields (no numbers)
+    if (['firstName', 'lastName', 'city'].includes(field.id) && /[0-9]/.test(value)) {
+      field.style.border = '1px solid #ff0000';
+      field.classList.add('error');
+      field.setCustomValidity('Cannot contain numbers');
+      return;
+    } else if (field.id === 'zip' && /[^0-9]/.test(value)) {
+      field.style.border = '1px solid #ff0000';
+      field.classList.add('error');
+      field.setCustomValidity('Zip code must be numbers only');
+      return;
+    } else if (field.id === 'phone') {
+      if (/[^0-9]/.test(value) || value.length !== 10) {
+        field.style.border = '1px solid #ff0000';
+        field.classList.add('error');
+        field.setCustomValidity('Phone must be exactly 10 digits');
+        return;
+      }
+    }
+    field.setCustomValidity('');
     
     // Update button state
     validateForm();
@@ -289,6 +332,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) {
         return response.json().then(data => {
           console.log('Discount error response:', data);
+          // Custom alert for out of uses
+          if (data.error && data.error.toLowerCase().includes('invalid or expired discount code')) {
+            showCartAlert('This coupon is no longer available.');
+            throw new Error('This coupon is no longer available.');
+          }
           throw new Error(data.error || 'Failed to apply discount code');
         });
       }

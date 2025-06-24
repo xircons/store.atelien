@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2025 at 12:52 AM
+-- Generation Time: Jun 24, 2025 at 11:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -36,21 +36,19 @@ CREATE TABLE `discount_coupons` (
   `min_order_amount` decimal(10,2) DEFAULT 0.00,
   `max_uses` int(11) DEFAULT NULL,
   `used_count` int(11) DEFAULT 0,
-  `is_active` tinyint(1) DEFAULT 1,
-  `valid_from` timestamp NULL DEFAULT NULL,
-  `valid_until` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` enum('enable','disable') NOT NULL DEFAULT 'enable'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `discount_coupons`
 --
 
-INSERT INTO `discount_coupons` (`id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `used_count`, `is_active`, `valid_from`, `valid_until`, `created_at`, `updated_at`) VALUES
-(1, 'SAVE100', 'Save $100 on your order', 'fixed', 100.00, 0.00, NULL, 7, 1, NULL, NULL, '2025-06-22 22:32:00', '2025-06-23 05:16:58'),
-(2, 'ATELIEN', 'Special Atelien discount - Save $650', 'fixed', 650.00, 0.00, NULL, 1, 1, NULL, NULL, '2025-06-22 22:32:00', '2025-06-23 06:54:03'),
-(3, 'WELCOME10', 'Welcome discount - 10% off', 'percentage', 10.00, 1000.00, 100, 4, 1, NULL, NULL, '2025-06-22 22:32:00', '2025-06-23 08:47:34');
+INSERT INTO `discount_coupons` (`id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `used_count`, `created_at`, `updated_at`, `status`) VALUES
+(2, 'ATELIEN', 'Special Atelien discount - Save $500', 'fixed', 500.00, 0.00, 1, 1, '2025-06-22 22:32:00', '2025-06-24 08:46:15', 'disable'),
+(3, 'WELCOME10', 'Welcome discount - 10% off', 'percentage', 10.00, 1000.00, 200, 101, '2025-06-22 22:32:00', '2025-06-24 08:43:43', 'enable'),
+(4, 'FREETAX', 'Free tax - 7% off', 'percentage', 7.00, 0.00, 0, 0, '2025-06-24 08:07:18', '2025-06-24 08:48:07', 'enable');
 
 -- --------------------------------------------------------
 
@@ -86,7 +84,8 @@ INSERT INTO `orders` (`id`, `user_id`, `status`, `shipping_info`, `shipping_meth
 (28, 1, 'pending', '{\"firstName\":\"test\",\"lastName\":\"test\",\"company\":\"\",\"address\":\"123\",\"apartment\":\"\",\"city\":\"cnx\",\"state\":\"Bangkok\",\"zip\":\"12\",\"phone\":\"00\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 12100.00, 650.00, 847.00, 13597.00, '[{\"id\":\"33\",\"name\":\"Puffball Pendant\",\"quantity\":1,\"price\":8500,\"image\":\"https://store.leibal.com/cdn/shop/files/puffball-pendant-lg.jpg?crop=center&height=2048&v=1704144082&width=2048\",\"maker\":\"Matter Made\",\"lead_time\":\"8-10 Weeks\"},{\"id\":\"47\",\"name\":\"Large Portal Vase\",\"quantity\":3,\"price\":1200,\"image\":\"https://store.leibal.com/cdn/shop/files/portal-2.jpg?crop=center&height=2048&v=1707531159&width=2048\",\"maker\":\"Origin Made\",\"lead_time\":\"6-8 Weeks\"}]', '2025-06-23 05:32:52', '2025-06-23 05:32:52'),
 (29, 1, 'pending', '{\"firstName\":\"wutti\",\"lastName\":\"sd\",\"company\":\"\",\"address\":\"123\",\"apartment\":\"\",\"city\":\"cnx\",\"state\":\"Ang Thong\",\"zip\":\"2\",\"phone\":\"000\",\"country\":\"TH\"}', 'express', 'WELCOME10', 1094.00, 10940.00, 800.00, 689.22, 11335.22, '[{\"id\":\"36\",\"name\":\"Puffball Table Lamp\",\"quantity\":2,\"price\":5470,\"image\":\"https://store.leibal.com/cdn/shop/files/puff-table-1.jpg?crop=center&height=2048&v=1703796523&width=2048\",\"maker\":\"Matter Made\",\"lead_time\":\"10-12 Weeks\"}]', '2025-06-23 06:04:50', '2025-06-23 06:04:50'),
 (30, 10, 'pending', '{\"firstName\":\"s\",\"lastName\":\"s\",\"company\":\"\",\"address\":\"1\",\"apartment\":\"\",\"city\":\"s\",\"state\":\"Ang Thong\",\"zip\":\"1\",\"phone\":\"1\",\"country\":\"TH\"}', 'express', 'ATELIEN', 650.00, 18570.00, 800.00, 1254.40, 19974.40, '[{\"id\":\"26\",\"name\":\"OBJ-06 Coffee Table\",\"quantity\":1,\"price\":16000,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-06.jpg?crop=center&height=2048&v=1713300179&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"57\",\"name\":\"ST02 Side Table\",\"quantity\":2,\"price\":1285,\"image\":\"https://store.leibal.com/cdn/shop/files/ast-1.jpg?crop=center&height=2048&v=1698260320&width=2048\",\"maker\":\"Johan Viladrich\",\"lead_time\":\"8-10 Weeks\"}]', '2025-06-23 06:54:19', '2025-06-23 06:54:19'),
-(31, 2, 'pending', '{\"firstName\":\"ss\",\"lastName\":\"ss\",\"company\":\"\",\"address\":\"123\",\"apartment\":\"\",\"city\":\"s\",\"state\":\"Ang Thong\",\"zip\":\"12\",\"phone\":\"123\",\"country\":\"TH\"}', 'express', 'WELCOME10', 7215.40, 72154.00, 800.00, 4545.70, 70284.30, '[{\"id\":\"40\",\"name\":\"Eileen Bedside Table + Tray\",\"quantity\":1,\"price\":4000,\"image\":\"https://store.leibal.com/cdn/shop/files/eileen-2.jpg?crop=center&height=2048&v=1715395088&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"6\",\"name\":\"Covent Residential Sofa\",\"quantity\":1,\"price\":8799,\"image\":\"https://store.leibal.com/cdn/shop/files/covent-residential-lana-2.jpg?crop=center&height=2048&v=1724877349&width=2048\",\"maker\":\"New Works\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"39\",\"name\":\"OBJ-04 Shelf\",\"quantity\":1,\"price\":9500,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-4-1.jpg?crop=center&height=2048&v=1712099900&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"50\",\"name\":\"Double Tray\\r\\n\",\"quantity\":1,\"price\":1100,\"image\":\"https://store.leibal.com/cdn/shop/files/double-tray-3.jpg?crop=center&height=2048&v=1705973769&width=2048\",\"maker\":\"whenobjectswork\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"51\",\"name\":\"MATUREWARE Lever Handle - Curved\\r\\n\",\"quantity\":1,\"price\":895,\"image\":\"https://store.leibal.com/cdn/shop/files/knob-curve-circle.jpg?crop=center&height=2048&v=1704311997&width=2048\",\"maker\":\"Futagami\",\"lead_time\":\"4-6 Weeks\"},{\"id\":\"26\",\"name\":\"OBJ-06 Coffee Table\",\"quantity\":1,\"price\":16000,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-06.jpg?crop=center&height=2048&v=1713300179&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"27\",\"name\":\"BB Coffee Table\",\"quantity\":3,\"price\":10620,\"image\":\"https://store.leibal.com/cdn/shop/files/bb-ct-1.jpg?crop=center&height=2048&v=1713299342&width=2048\",\"maker\":\"CORPUS STUDIO\",\"lead_time\":\"16-20 Weeks\"}]', '2025-06-23 08:47:39', '2025-06-23 08:47:39');
+(31, 2, 'pending', '{\"firstName\":\"ss\",\"lastName\":\"ss\",\"company\":\"\",\"address\":\"123\",\"apartment\":\"\",\"city\":\"s\",\"state\":\"Ang Thong\",\"zip\":\"12\",\"phone\":\"123\",\"country\":\"TH\"}', 'express', 'WELCOME10', 7215.40, 72154.00, 800.00, 4545.70, 70284.30, '[{\"id\":\"40\",\"name\":\"Eileen Bedside Table + Tray\",\"quantity\":1,\"price\":4000,\"image\":\"https://store.leibal.com/cdn/shop/files/eileen-2.jpg?crop=center&height=2048&v=1715395088&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"6\",\"name\":\"Covent Residential Sofa\",\"quantity\":1,\"price\":8799,\"image\":\"https://store.leibal.com/cdn/shop/files/covent-residential-lana-2.jpg?crop=center&height=2048&v=1724877349&width=2048\",\"maker\":\"New Works\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"39\",\"name\":\"OBJ-04 Shelf\",\"quantity\":1,\"price\":9500,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-4-1.jpg?crop=center&height=2048&v=1712099900&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"50\",\"name\":\"Double Tray\\r\\n\",\"quantity\":1,\"price\":1100,\"image\":\"https://store.leibal.com/cdn/shop/files/double-tray-3.jpg?crop=center&height=2048&v=1705973769&width=2048\",\"maker\":\"whenobjectswork\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"51\",\"name\":\"MATUREWARE Lever Handle - Curved\\r\\n\",\"quantity\":1,\"price\":895,\"image\":\"https://store.leibal.com/cdn/shop/files/knob-curve-circle.jpg?crop=center&height=2048&v=1704311997&width=2048\",\"maker\":\"Futagami\",\"lead_time\":\"4-6 Weeks\"},{\"id\":\"26\",\"name\":\"OBJ-06 Coffee Table\",\"quantity\":1,\"price\":16000,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-06.jpg?crop=center&height=2048&v=1713300179&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"27\",\"name\":\"BB Coffee Table\",\"quantity\":3,\"price\":10620,\"image\":\"https://store.leibal.com/cdn/shop/files/bb-ct-1.jpg?crop=center&height=2048&v=1713299342&width=2048\",\"maker\":\"CORPUS STUDIO\",\"lead_time\":\"16-20 Weeks\"}]', '2025-06-23 08:47:39', '2025-06-23 08:47:39'),
+(32, 1, 'pending', '{\"firstName\":\"1\",\"lastName\":\"1\",\"company\":\"\",\"address\":\"1\",\"apartment\":\"\",\"city\":\"1\",\"state\":\"Krabi\",\"zip\":\"1\",\"phone\":\"1\",\"country\":\"TH\"}', 'standard', 'welcome10', 580.00, 5800.00, 650.00, 365.40, 6235.40, '[{\"id\":\"10\",\"name\":\"O Stool\",\"quantity\":1,\"price\":5800,\"image\":\"https://store.leibal.com/cdn/shop/products/ostool2.jpg?crop=center&height=2048&v=1571439761&width=2048\",\"maker\":\"Estudio Persona\",\"lead_time\":\"6-8 Weeks\"}]', '2025-06-24 07:02:49', '2025-06-24 07:02:49');
 
 -- --------------------------------------------------------
 
@@ -114,7 +113,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `cost_price`, `category`, `image`, `image_hover`, `maker`, `lead_time`, `created_at`, `status`) VALUES
-(1, 'PK24 - Leather', 'The PK24™ Chaise Longue, one of the most distinguished pieces in Fritz Hansen\'s Poul Kjærholm collection, seamlessly blends historical influence with modern materials and methods. Drawing inspiration from the Rococo period and the French chaise longue, Kjærholm reimagined the concept using steel, rendering a support system for a smoothly flowing form. Known also as the \'Hammock Chair\', the PK24™ puts forward a unique design principle — suspending the body between two points. This structural design underscores the practical function of the chair, offering unparalleled comfort while maintaining a sculptural, fluid aesthetic.\r\n\r\nThe chair’s flowing form, achieved through Kjærholm\'s ingenious use of steel, offers a seamless blend of strength and elegance. It captures the essence of modern design while hinting at historical periods, creating a timeless piece that appeals to a wide range of aesthetics. For architects and design professionals, the PK24™ Chaise Longue is not just a chair; it is an embodiment of innovative design that draws from the past while shaping the future. Whether placed in a minimalist workspace or a classical interior, the PK24™ brings both style and function, making a bold statement about the appreciation of enduring design.', 21170.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/pk24-side-natural.jpg?crop=center&height=2048&v=1685311498&width=2048', NULL, 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
+(1, 'PK24 - Leather', 'The PK24™ Chaise Longue, one of the most distinguished pieces in Fritz Hansen\'s Poul Kjærholm collection, seamlessly blends historical influence with modern materials and methods. Drawing inspiration from the Rococo period and the French chaise longue, Kjærholm reimagined the concept using steel, rendering a support system for a smoothly flowing form. Known also as the \'Hammock Chair\', the PK24™ puts forward a unique design principle — suspending the body between two points. This structural design underscores the practical function of the chair, offering unparalleled comfort while maintaining a sculptural, fluid aesthetic.\n\nThe chair’s flowing form, achieved through Kjærholm\'s ingenious use of steel, offers a seamless blend of strength and elegance. It captures the essence of modern design while hinting at historical periods, creating a timeless piece that appeals to a wide range of aesthetics. For architects and design professionals, the PK24™ Chaise Longue is not just a chair; it is an embodiment of innovative design that draws from the past while shaping the future. Whether placed in a minimalist workspace or a classical interior, the PK24™ brings both style and function, making a bold statement about the appreciation of enduring design.', 21170.00, 1000.00, 'seating', 'https://store.leibal.com/cdn/shop/files/pk24-side-natural.jpg?crop=center&height=2048&v=1685311498&width=2048', NULL, 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
 (2, 'PK24 - Wicker', 'The PK24™ Chaise Longue, one of the most distinguished pieces in Fritz Hansen\'s Poul Kjærholm collection, seamlessly blends historical influence with modern materials and methods. Drawing inspiration from the Rococo period and the French chaise longue, Kjærholm reimagined the concept using steel, rendering a support system for a smoothly flowing form. Known also as the \'Hammock Chair\', the PK24™ puts forward a unique design principle — suspending the body between two points. This structural design underscores the practical function of the chair, offering unparalleled comfort while maintaining a sculptural, fluid aesthetic.\r\n\r\nThe chair’s flowing form, achieved through Kjærholm\'s ingenious use of steel, offers a seamless blend of strength and elegance. It captures the essence of modern design while hinting at historical periods, creating a timeless piece that appeals to a wide range of aesthetics. For architects and design professionals, the PK24™ Chaise Longue is not just a chair; it is an embodiment of innovative design that draws from the past while shaping the future. Whether placed in a minimalist workspace or a classical interior, the PK24™ brings both style and function, making a bold statement about the appreciation of enduring design.', 26847.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/pk24-wicker-black-2.jpg?crop=center&height=2048&v=1685310872&width=2048', NULL, 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'enable'),
 (3, 'OBJ-05 Chair', 'Manu Bañó\'s latest series delves into the capabilities and boundaries of copper, crafted in the enchanting town of Santa Clara del Cobre, Michoacán, Mexico, renowned for its extensive goldsmith heritage and craftsmen skilled in creating diminutive copper items like pots and vessels. This collection features three items: a chair, a coffee table, and a wall lamp. Each piece is meticulously shaped by hand from a slender copper sheet. The manual hammering process not only fortifies the material but also adds a three-dimensional quality to the designs.', 18000.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048', 'https://store.leibal.com/cdn/shop/files/obj-05-1.jpg?crop=center&height=2048&v=1713210368&width=2048', 'Manu Bano', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
 (4, 'Marina Sofa', 'In contrast to Crude\'s signature clean-lined designs, the Marina Sofa stands out with its understated curvature, adding a touch of elegance to any space. Crafted with an oak veneered frame, its versatility shines through with removable marble powder backrests, effortlessly transforming it into a luxurious chaise lounge. With a blend of natural and synthetic feather cushions, it offers a hypoallergenic seating solution. Tailored to fit any project, its size and wood frame color can be customized, while a diverse selection of linen upholstery colors ensures a perfect match for every client\'s preferences.', 13750.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/marina-2.jpg?crop=center&height=2048&v=1715395591&width=2048', 'https://store.leibal.com/cdn/shop/files/marina-1.jpg?crop=center&height=2048&v=1715395592&width=2048', 'Obstacles', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
@@ -197,9 +196,7 @@ INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `role`) VALUES
 --
 ALTER TABLE `discount_coupons`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`),
-  ADD KEY `idx_is_active` (`is_active`),
-  ADD KEY `idx_valid_until` (`valid_until`);
+  ADD UNIQUE KEY `code` (`code`);
 
 --
 -- Indexes for table `orders`
@@ -234,19 +231,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `discount_coupons`
 --
 ALTER TABLE `discount_coupons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=566;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=567;
 
 --
 -- AUTO_INCREMENT for table `users`

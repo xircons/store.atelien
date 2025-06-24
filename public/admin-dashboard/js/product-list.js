@@ -7,6 +7,33 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => {
             document.getElementById('productItems').innerHTML = '<div class="error">Failed to load products.</div>';
         });
+    // Export to Excel button handler
+    const exportBtn = document.querySelector('.btn.export');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            fetch('/api/admin/export/products', {
+                method: 'GET',
+                headers: {},
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to export data');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'products_export.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(err => {
+                showProductAlert('Failed to export data. Please try again.', 'error');
+            });
+        });
+    }
 });
 
 function renderProductGrid(products) {
@@ -36,7 +63,11 @@ function renderProductGrid(products) {
             <span class="product-status">
                 <i class="bi ${statusIcon} status-toggle ${statusClass}" data-id="${product.id}" data-status="${product.status}" title="Click to toggle status"></i>
             </span>
-            <span class="product-edit"><i class="bi bi-pencil-square"></i></span>
+            <span class="product-edit">
+                <a href="edit-product.html?id=${product.id}" title="Edit product">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+            </span>
             <span class="product-delete"><i class="bi bi-trash3"></i></span>
         </div>
     `}).join('');
