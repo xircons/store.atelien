@@ -67,25 +67,20 @@ body {
 
 .checkout-container {
   display: flex;
-  max-width: 1200px;
   margin: 3rem auto;
-  gap: 0;
   background: #fff;
-  padding: 0;
+  padding: 0 0;
+  gap: 1rem;
+  max-width: calc(100% - 120px);
+  padding-right: 20px;
+  width: 100%;
 }
 
-.checkout-left {
-  flex: 1.2;
-  padding: 2.5rem 2.5rem 2.5rem 0;
-  background: #fff;
-  min-width: 420px;
-}
-
-.checkout-right {
+.checkout-left, .checkout-right {
   flex: 1;
-  border-left: 1px solid #eee;
-  padding: 2.5rem 2.5rem 2.5rem 2.5rem;
-  min-width: 340px;
+  min-width: 0;
+  padding: 2.5rem 2rem;
+  background: #fff;
 }
 
 .checkout-header {
@@ -377,7 +372,7 @@ input:focus, select:focus {
 
 .discount-row {
   display: flex;
-  gap: 5px;
+  gap: 0.5rem;
   margin-bottom: 12px;
 }
 
@@ -387,8 +382,7 @@ input:focus, select:focus {
   font-weight: 300;
   background: rgb(42, 42, 42, 0.025);
   border: 1px solid #e0e0e0;
-  padding: 8px 12px;
-  flex: 0 0 75%;
+  flex: 3;
   
   /* Cross-platform appearance reset */
   -webkit-appearance: none;
@@ -416,11 +410,10 @@ input:focus, select:focus {
 }
 
 .discount-row button {
-  flex: 0 0 25%;
-  padding: 8px 12px;
+  flex: 1;
+  padding: 8px 0px 8px 12px;
   background: #2a2a2a;
   color: #fff;
-  border: 1px solid #2a2a2a;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 400;
@@ -459,7 +452,6 @@ input:focus, select:focus {
 
 .cart-summary {
   background: #fff;
-  padding: 20px;
 }
 .cart-summary h2 {
   margin-top: 0;

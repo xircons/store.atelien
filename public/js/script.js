@@ -74,10 +74,10 @@ function injectAdminButton() {
             // Find nav-left
             const navLeft = document.querySelector('.nav-left .nav-menu');
             if (navLeft && !document.getElementById('adminMenuBtn')) {
+                const navLeft = document.querySelector('.nav-left');
                 const adminBtn = document.createElement('a');
                 adminBtn.href = '/admin-dashboard/overview.html';
                 adminBtn.className = 'nav-item';
-                adminBtn.id = 'adminMenuBtn';
                 adminBtn.textContent = 'Admin';
                 navLeft.appendChild(adminBtn);
             }

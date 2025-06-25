@@ -12,22 +12,18 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: calc(100vh - 120px);
-    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0rem 6.8rem 8rem 6.3rem;
     align-items: stretch;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .login-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 4rem 2rem;
-    max-width: 500px;
-    width: 100%;
-    margin: 0 auto;
+    padding: 0 10.25rem 0 10.4rem;
 }
 
 .login-header {
@@ -156,18 +152,6 @@
     cursor: pointer;
 }
 
-.forgot-password {
-    font-size: clamp(0.8rem, 2vw, 0.9rem);
-    color: rgba(6, 29, 27, 0.8);
-    text-decoration: none;
-    transition: color 0.3s ease;
-    white-space: nowrap;
-}
-
-.forgot-password:hover {
-    color: rgba(6, 29, 27, 1);
-}
-
 /* Login Button */
 .login-btn {
     width: 100%;
@@ -177,18 +161,17 @@
     color: #fff;
     border: none;
     font-size: clamp(0.9rem, 2vw, 1rem);
-    font-weight: 400;
+    font-weight: 300;
     cursor: pointer;
-    transition: all 0.3s ease;
     margin-top: 1rem;
-    border-radius: 2px;
     letter-spacing: 0.5px;
 }
 
 .login-btn:hover {
-    background-color: #333;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    color: #2a2a2a;
+    border: 1px solid #2a2a2a;
+    font-weight: 400;
 }
 
 .login-btn:active {
