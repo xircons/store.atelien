@@ -36,18 +36,8 @@ router.post('/', requireAuth, (req, res) => {
     const orderData = {
         userId: req.user.id,
         status: 'pending',
-        shipping: {
-            firstName: shipping.firstName,
-            lastName: shipping.lastName,
-            company: shipping.company || '',
-            address: shipping.address,
-            apartment: shipping.apartment || '',
-            city: shipping.city,
-            state: shipping.state,
-            zip: shipping.zip,
-            phone: shipping.phone || '',
-            country: shipping.country
-        },
+        // Combine shipping fields into a single address string
+        shipping: `${shipping.address}${shipping.apartment ? ' ' + shipping.apartment : ''}\n${shipping.company ? shipping.company + '\n' : ''}${shipping.city} ${shipping.state} ${shipping.zip}\n${shipping.country}`,
         shippingMethod,
         discountCode: discountCode || null,
         discountAmount: discountAmount || 0,
@@ -55,7 +45,8 @@ router.post('/', requireAuth, (req, res) => {
         shippingCost,
         taxes,
         total,
-        items: cartItems,
+        // Only keep product IDs as a comma-separated string
+        items: cartItems.map(item => item.id).join(','),
         createdAt: new Date()
     };
 
@@ -71,7 +62,7 @@ router.post('/', requireAuth, (req, res) => {
     const orderValues = [
         orderData.userId,
         orderData.status,
-        JSON.stringify(orderData.shipping),
+        orderData.shipping, // now a plain string
         orderData.shippingMethod,
         orderData.discountCode,
         orderData.discountAmount,
@@ -79,7 +70,7 @@ router.post('/', requireAuth, (req, res) => {
         orderData.shippingCost,
         orderData.taxes,
         orderData.total,
-        JSON.stringify(orderData.items),
+        orderData.items, // now a comma-separated string of product IDs
         orderData.createdAt
     ];
 
@@ -106,7 +97,7 @@ router.post('/', requireAuth, (req, res) => {
                 id: orderId,
                 status: orderData.status,
                 total: orderData.total,
-                items: orderData.items.length
+                items: orderData.items.split(',').length
             }
         });
     });
@@ -152,8 +143,8 @@ router.get('/orders', requireAuth, (req, res) => {
                     status: order.status,
                     total: order.total,
                     createdAt: order.created_at,
-                    shipping: JSON.parse(order.shipping_info),
-                    items: JSON.parse(order.items)
+                    shipping: order.shipping_info,
+                    items: order.items.split(',')
                 }))
             });
         });
@@ -185,7 +176,7 @@ router.get('/orders/:id', requireAuth, (req, res) => {
             order: {
                 id: order.id,
                 status: order.status,
-                shipping: JSON.parse(order.shipping_info),
+                shipping: order.shipping_info,
                 shippingMethod: order.shipping_method,
                 discountCode: order.discount_code,
                 discountAmount: order.discount_amount,
@@ -193,7 +184,7 @@ router.get('/orders/:id', requireAuth, (req, res) => {
                 shippingCost: order.shipping_cost,
                 taxes: order.taxes,
                 total: order.total,
-                items: JSON.parse(order.items),
+                items: order.items.split(','),
                 createdAt: order.created_at
             }
         });

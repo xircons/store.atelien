@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const app = express();
+const db = require('./models/db');
 
 // Middleware
 app.use(express.json());
@@ -29,6 +30,9 @@ const cartRoutes = require('./routes/cart');
 const checkoutRoutes = require('./routes/checkout');
 const discountRoutes = require('./routes/discounts');
 const adminRoutes = require('./routes/admin');
+const logRoutes = require('./routes/log');
+
+app.set('db', db);
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
@@ -36,6 +40,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/discounts', discountRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/log', logRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;

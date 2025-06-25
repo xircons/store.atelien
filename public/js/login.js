@@ -25,26 +25,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         
-        // Clear previous validation states
         clearValidationErrors();
         
-        // Basic validation
-        let hasErrors = false;
-        
+        // Custom cart-style alert for empty email
         if (!email) {
             showFieldError(emailInput, 'Email is required');
-            hasErrors = true;
-        } else if (!isValidEmail(email)) {
-            showFieldError(emailInput, 'Please enter a valid email address');
-            hasErrors = true;
+            showCartAlert('Email is required.');
+            return;
         }
-        
+        // Custom cart-style alert for invalid email (missing @)
+        if (!email.includes('@')) {
+            showFieldError(emailInput, "Please include an '@' in the email address.");
+            return;
+        }
+        // Custom cart-style alert for incomplete email (regex fail)
+        if (!isValidEmail(email)) {
+            showFieldError(emailInput, 'Email is incomplete.');
+            showCartAlert('Email is incomplete.');
+            return;
+        }
+        // Custom cart-style alert for empty password
         if (!password) {
             showFieldError(passwordInput, 'Password is required');
-            hasErrors = true;
-        }
-        
-        if (hasErrors) {
+            showCartAlert('Password is required.');
             return;
         }
         
@@ -68,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Login error:', error);
-            showError(error.message || 'Login failed. Please try again.');
+            showCartAlert('Wrong emails or wrong password.');
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
@@ -207,4 +210,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Adjust on window resize
         window.addEventListener('resize', setContentHeight);
     }
-}); 
+});
+
+// Function to show cart-style alerts (copied from cart.js)
+function showCartAlert(message) {
+    let alert = document.getElementById('cartAlert');
+    if (!alert) {
+        alert = document.createElement('div');
+        alert.id = 'cartAlert';
+        alert.className = 'cart-alert';
+        alert.innerHTML = `
+            <div class="alert-content">
+                <span class="alert-message">${message}</span>
+                <button class="alert-close" onclick="this.parentElement.parentElement.classList.remove('show')">×</button>
+            </div>
+        `;
+        document.body.appendChild(alert);
+    } else {
+        const alertMessage = alert.querySelector('.alert-message');
+        if (alertMessage) {
+            alertMessage.textContent = message;
+        }
+    }
+    alert.classList.add('show');
+    setTimeout(() => {
+        alert.classList.remove('show');
+    }, 3000);
+} 

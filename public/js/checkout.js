@@ -330,6 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => {
       console.log('Discount response status:', response.status);
       if (!response.ok) {
+        if (response.status === 401) {
+          showCartAlert('Please log in to apply a discount code.');
+          throw new Error('Authentication required');
+        }
         return response.json().then(data => {
           console.log('Discount error response:', data);
           // Custom alert for out of uses

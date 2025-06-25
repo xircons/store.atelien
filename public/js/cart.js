@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="cart-item-quantity">
                     <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">−</button>
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})" ${item.quantity === 1 ? 'disabled' : ''}>−</button>
                         <input type="text" class="quantity-input" value="${item.quantity}" readonly>
                         <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
                     </div>
@@ -289,11 +289,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Global functions for cart operations
     window.updateQuantity = function(productId, newQuantity) {
+        const currentCart = getCartFromStorage();
+        const item = currentCart.items.find(i => i.id === productId);
+        if (item && item.quantity === 1 && newQuantity < 1) {
+            // Do nothing if trying to decrease below 1
+            return;
+        }
         if (newQuantity < 1) {
             newQuantity = 1;
         }
-
-        const currentCart = getCartFromStorage();
 
         fetch(`/api/cart/${productId}`, {
             method: 'PUT',

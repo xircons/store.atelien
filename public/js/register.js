@@ -16,38 +16,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
-
-        // Clear previous validation states
         clearValidationErrors();
-
-        // Basic validation
-        let hasErrors = false;
-
+        // Custom cart-style alert for empty email
         if (!email) {
             showFieldError(emailInput, 'Email is required');
-            hasErrors = true;
-        } else if (!isValidEmail(email)) {
-            showFieldError(emailInput, 'Please enter a valid email address');
-            hasErrors = true;
+            showCartAlert('Email is required');
+            return;
         }
-
+        // Custom cart-style alert for invalid email (missing @)
+        if (!email.includes('@')) {
+            showFieldError(emailInput, "Please include an '@' in the email address.");
+            showCartAlert(`Please include an '@' in the email address. '${email}' is missing an '@'.`);
+            return;
+        } else if (!isValidEmail(email)) {
+            showFieldError(emailInput, 'Email is incomplete.');
+            showCartAlert(`'${email}' is not a valid email format.`);
+            return;
+        }
+        // Custom cart-style alert for empty password
         if (!password) {
             showFieldError(passwordInput, 'Password is required');
-            hasErrors = true;
-        } else if (password.length < 6) {
-            showFieldError(passwordInput, 'Password must be at least 6 characters long');
-            hasErrors = true;
+            showCartAlert('Password is required');
+            return;
+        }
+        // Custom cart-style alert for short password
+        if (password.length < 6) {
+            showFieldError(passwordInput, 'Password must be at least 6 characters long.');
+            showCartAlert('Password must be at least 6 characters long.');
+            return;
         }
 
         if (!confirmPassword) {
             showFieldError(confirmPasswordInput, 'Please confirm your password');
-            hasErrors = true;
+            showCartAlert('Please confirm your password');
+            return;
         } else if (password !== confirmPassword) {
             showFieldError(confirmPasswordInput, 'Passwords do not match');
-            hasErrors = true;
-        }
-
-        if (hasErrors) {
+            showCartAlert('Passwords do not match');
             return;
         }
 
@@ -204,5 +209,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Adjust on window resize
         window.addEventListener('resize', setContentHeight);
+    }
+
+    // Function to show cart-style alerts (copied from cart.js)
+    function showCartAlert(message) {
+        let alert = document.getElementById('cartAlert');
+        if (!alert) {
+            alert = document.createElement('div');
+            alert.id = 'cartAlert';
+            alert.className = 'cart-alert';
+            alert.innerHTML = `
+                <div class=\"alert-content\">\n                    <span class=\"alert-message\">${message}</span>\n                    <button class=\"alert-close\" onclick=\"this.parentElement.parentElement.classList.remove('show')\">×</button>\n                </div>\n            `;
+            document.body.appendChild(alert);
+        } else {
+            const alertMessage = alert.querySelector('.alert-message');
+            if (alertMessage) {
+                alertMessage.textContent = message;
+            }
+        }
+        alert.classList.add('show');
+        setTimeout(() => {
+            alert.classList.remove('show');
+        }, 3000);
     }
 }); 
