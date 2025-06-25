@@ -220,7 +220,7 @@ function populateProductData(product, elements) {
         elements.productDesigner.textContent = product.designer || 'Unknown Designer';
     }
     if (elements.productPrice) {
-        elements.productPrice.textContent = `$${Number(product.price).toLocaleString()}`;
+        elements.productPrice.textContent = `$${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     }
     if (elements.productLeadTime) {
         elements.productLeadTime.textContent = product.lead_time || 'Contact for availability';
@@ -389,7 +389,7 @@ function loadRelatedProducts(category, currentProductId) {
                          onerror="this.src='/images/product/default-fallback-image.png'; this.onerror=null;">
                     <h3>${product.name}</h3>
                     <p class="maker">${product.maker || 'Unknown Maker'}</p>
-                    <p class="price">$${Number(product.price).toLocaleString()} USD</p>
+                    <p class="price">$${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
                 </a>
             `).join('');
         })

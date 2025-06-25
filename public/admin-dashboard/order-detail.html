@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/images/logo/favicon-two.png" type="image/x-icon">
+    <title>Atelien Store — Admin Dashboard</title>
+    <link rel="stylesheet" href="css/product-list.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .order-detail-container {
+            background: #fff;
+        }
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .product-header h2 {
+            font-size: 2.25rem;
+            font-weight: 400;
+            margin: 0;
+        }
+        .product-actions .btn {
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            margin-left: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .product-actions .btn.add {
+            background: #2a2a2a;
+            color: #fff;
+            border: none;
+        }
+        .product-actions .btn.add:hover {
+            font-weight: 400;
+            background: #fff;
+            color: #2a2a2a;
+            border: 1px solid #2a2a2a;
+        }
+        .product-actions .btn.print {
+            background: #fff;
+            color: #2a2a2a;
+            border: 1px solid #e5e7eb;
+        }
+        .product-actions .btn.print:hover {
+            background: #2a2a2a;
+            color: #fff;
+            border: none;
+        }
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 2rem;
+        }
+        .order-section {
+            background: white;
+        }
+        .order-section h3 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #2a2a2a;
+            text-decoration: underline;
+            padding: 1rem 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding: 0.8rem 0;
+            font-size: 0.9rem;
+            font-weight: 300;
+            border-bottom: 1px solid rgba(6, 29, 27, 0.2);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .info-label {
+            font-weight: 300;
+            color: #2a2a2a;
+        }
+        .info-value {
+            color: #2a2a2a;
+            font-weight: 300;
+        }
+        .order-items {
+            margin: 4rem 0 6rem 0;
+            background: white;
+        }
+        .order-items h3 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #2a2a2a;
+            letter-spacing: 0.02em;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 100px 100px;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(6, 29, 27, 0.2);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        .item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .item-details h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #2a2a2a;
+        }
+        .item-details p {
+            margin: 0;
+            color: rgba(6, 29, 27, 0.8);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 400;
+            font-size: 0.9rem;
+            gap: 0.5em;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-paid {
+            color: #059669;
+        }
+        .status-paid .status-dot {
+            background: #059669;
+        }
+        .status-pending {
+            color: #f59e42;
+        }
+        .status-pending .status-dot {
+            background: #f59e42;
+        }
+        .status-failed {
+            color: #dc2626;
+        }
+        .status-failed .status-dot {
+            background: #dc2626;
+        }
+        .status-cancelled {
+            color: #dc2626;
+        }
+        .status-cancelled .status-dot {
+            background: #dc2626;
+        }
+        .status-in_transit {
+            color: #3b82f6;
+        }
+        .status-in_transit .status-dot {
+            background: #3b82f6;
+        }
+        .status-delivered {
+            color: #059669;
+        }
+        .status-delivered .status-dot {
+            background: #059669;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc2626;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        .orders-table th, .orders-table td {
+            padding: 0.75rem 0;
+            text-align: left;
+            vertical-align: top;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: rgba(6, 29, 27, 0.8);
+        }
+        .orders-table th {
+            color: #2a2a2a;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            background: white;
+            border-top: 1px solid rgba(6, 29, 27, 0.5);
+            border-bottom: 1px solid rgba(6, 29, 27, 0.5);
+        }
+        .orders-table tr {
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        .orders-table tr:last-child {
+            border-bottom: none;
+        }
+        .orders-table td.amount {
+            font-weight: 400;
+            font-size: 1rem;
+            color: #2a2a2a;
+            padding-top: 0.5rem;
+        }
+        .orders-table td {
+            padding-top: 1.25rem;
+        }
+        /* Print styles */
+        @media print {
+            .product-actions, .sidebar-container {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            .order-detail-container {
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            body {
+                background: white !important;
+            }
+            .order-section {
+                margin-bottom: 4rem;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .order-info-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .product-header h2 {
+                font-size: 1.8rem;
+            }
+            .order-section h3 {
+                font-size: 1.3rem;
+            }
+            .order-items h3 {
+                font-size: 1.3rem;
+            }
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .item-image {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto;
+            }
+            .orders-table th, .orders-table td {
+                padding: 0.5rem 8px;
+                font-size: 0.75rem;
+            }
+            .orders-table {
+                font-size: 0.8rem;
+            }
+        }
+        .cart-alert {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #2a2a2a;
+            color: white;
+            padding: 0.25rem 1rem;
+            z-index: 1000;
+            transform: translateX(110%);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s;
+            max-width: 90vw;
+            min-width: 100px;
+            width: auto;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .cart-alert.show {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .alert-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .alert-message {
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: normal;
+            word-break: break-word;
+            flex: 1;
+            text-align: left;
+        }
+        .alert-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar include -->
+    <div id="sidebar-container"></div>
+    <script>
+    fetch('sidebar.html').then(r => r.text()).then(html => {
+      document.getElementById('sidebar-container').innerHTML = html;
+    });
+    </script>
+    <script src="js/sidebar-active.js"></script>
+    
+    <main class="main-content">
+        <div class="order-detail-container">
+            <div class="product-header">
+                <h2>Order Details</h2>
+                <div class="product-actions">
+                    <button class="btn print">Print</button>
+                    <a href="order-list.html" class="btn add">
+                        Back to Orders
+                    </a>
+                </div>
+            </div>
+            <div class="cart-alert" id="cartAlert">
+              <div class="alert-content">
+                <span class="alert-message" id="cartAlertMessage"></span>
+                <button class="alert-close" id="cartAlertClose" aria-label="Close alert">×</button>
+              </div>
+            </div>
+            <div id="orderDetailContent">
+                <div class="loading">Loading order details...</div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="js/order-detail.js"></script>
+</body>
+</html> 

@@ -75,55 +75,9 @@
                             <th>Amount Spent</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="recentOrdersTableBody">
                         <tr>
-                            <td>#92627</td>
-                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
-                            <td>09/07/2022</td>
-                            <td>Tara Fletcher</td>
-                            <td class="amount">$279.00</td>
-                        </tr>
-                        <tr>
-                            <td>#92509</td>
-                            <td><span class="status-badge status-pending"><span class="status-dot"></span>Pending</span></td>
-                            <td>26/06/2022</td>
-                            <td>Joyce Freeman</td>
-                            <td class="amount">$831.00</td>
-                        </tr>
-                        <tr>
-                            <td>#91631</td>
-                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
-                            <td>18/06/2022</td>
-                            <td>Brittany Hale</td>
-                            <td class="amount">$142.00</td>
-                        </tr>
-                        <tr>
-                            <td>#90963</td>
-                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
-                            <td>11/06/2022</td>
-                            <td>Luke Cook</td>
-                            <td class="amount">$232.00</td>
-                        </tr>
-                        <tr>
-                            <td>#89332</td>
-                            <td><span class="status-badge status-pending"><span class="status-dot"></span>Pending</span></td>
-                            <td>02/06/2022</td>
-                            <td>Eileen Horton</td>
-                            <td class="amount">$597.00</td>
-                        </tr>
-                        <tr>
-                            <td>#89107</td>
-                            <td><span class="status-badge status-failed"><span class="status-dot"></span>Failed</span></td>
-                            <td>17/04/2022</td>
-                            <td>Frederick Adams</td>
-                            <td class="amount">$72.00</td>
-                        </tr>
-                        <tr>
-                            <td>#89021</td>
-                            <td><span class="status-badge status-paid"><span class="status-dot"></span>Paid</span></td>
-                            <td>13/04/2022</td>
-                            <td>Lee Wheeler</td>
-                            <td class="amount">$110.00</td>
+                            <td colspan="5" style="text-align: center; padding: 2rem;">Loading recent orders...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -132,5 +86,93 @@
     </div>
     <script src="js/chart.js"></script>
     <script src="js/sidebar-active.js"></script>
+    <script>
+        // Fetch and display recent orders
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchRecentOrders();
+        });
+
+        function fetchRecentOrders() {
+            fetch('/api/admin/orders')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.message || 'Failed to fetch orders');
+                    displayRecentOrders(data.orders);
+                })
+                .catch(err => {
+                    console.error('Error fetching recent orders:', err);
+                    document.getElementById('recentOrdersTableBody').innerHTML = 
+                        '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #dc2626;">Failed to load recent orders</td></tr>';
+                });
+        }
+
+        function displayRecentOrders(orders) {
+            const tbody = document.getElementById('recentOrdersTableBody');
+            
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No orders found</td></tr>';
+                return;
+            }
+
+            // Sort by created_at descending to get the most recent orders first
+            const recentOrders = orders
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 5); // Get only the 5 most recent orders
+
+            tbody.innerHTML = recentOrders.map(order => {
+                const statusClass = getStatusClass(order.status);
+                const statusText = capitalizeFirst(order.status);
+                const formattedDate = formatDate(order.created_at);
+                const formattedAmount = formatCurrency(order.total);
+                
+                return `
+                    <tr>
+                        <td>#${order.id}</td>
+                        <td><span class="status-badge ${statusClass}"><span class="status-dot"></span>${statusText}</span></td>
+                        <td>${formattedDate}</td>
+                        <td>${escapeHtml(order.shipping_info)}</td>
+                        <td class="amount">${formattedAmount}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'paid': return 'status-paid';
+                case 'pending': return 'status-pending';
+                case 'failed': return 'status-failed';
+                case 'cancelled': return 'status-failed';
+                default: return 'status-pending';
+            }
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            if (isNaN(d)) return '';
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function formatCurrency(amount) {
+            return `$${parseFloat(amount).toLocaleString(undefined, { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+            })}`;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
 </body>
 </html> 

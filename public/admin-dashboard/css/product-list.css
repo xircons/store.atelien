@@ -511,10 +511,11 @@ body {
 .alert-message {
     font-size: 0.8rem;
     font-weight: 400;
-    color: #fff;
+    white-space: normal;
+    word-break: break-word;
     flex: 1;
-    min-width: 0;
-    max-width: 220px;
+    text-align: left;
+    color: #fff;
 }
 .alert-close {
     background: none;
@@ -525,9 +526,6 @@ body {
     transition: color 0.2s;
     padding: 0;
     margin: 0;
-}
-.alert-close:hover {
-    color: #d32f2f;
 }
 @keyframes slideInFromRight {
     from { 

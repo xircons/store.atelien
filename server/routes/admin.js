@@ -21,7 +21,7 @@ router.get('/orders', (req, res) => {
             status,
             COALESCE(status_delivery, 'pending') as status_delivery
         FROM orders 
-        ORDER BY created_at DESC
+        ORDER BY id ASC
     `;
     
     db.query(query, (err, results) => {
@@ -54,6 +54,44 @@ router.put('/orders/:id', (req, res) => {
     });
 });
 
+// Add endpoint for individual order details
+router.get('/orders/:id', (req, res) => {
+    const orderId = req.params.id;
+    const query = `
+        SELECT 
+            id, 
+            user_id, 
+            status,
+            status_delivery,
+            shipping_info,
+            shipping_method,
+            discount_code,
+            discount_amount,
+            subtotal,
+            shipping_cost,
+            taxes,
+            total,
+            items,
+            created_at,
+            updated_at
+        FROM orders 
+        WHERE id = ?
+    `;
+    
+    db.query(query, [orderId], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, error: 'Database error' });
+        }
+        
+        if (results.length === 0) {
+            return res.status(404).json({ success: false, error: 'Order not found' });
+        }
+        
+        res.json({ success: true, order: results[0] });
+    });
+});
+
 // Add endpoints for updating order status and delivery status
 router.post('/update-order-status', (req, res) => {
     const { orderId, status } = req.body;
@@ -74,6 +112,22 @@ router.post('/update-order-delivery', (req, res) => {
             return res.status(500).json({ success: false, error: 'Database error' });
         }
         res.json({ success: true });
+    });
+});
+
+// DELETE /api/admin/orders/:id
+router.delete('/orders/:id', (req, res) => {
+    const orderId = req.params.id;
+    db.query('DELETE FROM orders WHERE id = ?', [orderId], (err, result) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (result.affectedRows > 0) {
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: 'Order not found' });
+        }
     });
 });
 

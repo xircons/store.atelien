@@ -212,7 +212,7 @@ class ProductSearch {
                 <div class="product-info">
                     <h3>${this.highlightSearchTerm(product.name)}</h3>
                     <p class="maker">${product.maker || 'N/A'}</p>
-                    <p class="price">$${Number(product.price).toLocaleString()} USD</p>
+                    <p class="price">$${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
                 </div>
             </div>
         `).join('');

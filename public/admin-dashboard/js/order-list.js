@@ -25,13 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
             
             row.innerHTML = `
                 <div class="product-item">
-                    <span class="header-product">${order.id}</span>
-                    <span class="header-price">${escapeHtml(order.user_id)}</span>
-                    <span class="header-info">${escapeHtml(order.shipping_info)}</span>
-                    <span class="header-submitted">${escapeHtml(order.shipping_method)}</span>
-                    <span class="header-total total-amount">$${parseFloat(order.total).toFixed(2)}</span>
-                    <span class="header-created">${formatDate(order.created_at)}</span>
-                    <span class="header-category">
+                    <span class="header-product">#${order.id}</span>
+                    <span class="header-status">
                         <div class="status-container">
                             <span class="status-dot ${getStatusDotClass(order.status)}"></span>
                             <div style="display: flex; align-items: center; gap: 2px;">
@@ -45,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         </div>
                     </span>
-                    <span class="header-message">
+                    <span class="header-status">
                         <div class="status-container">
                             <span class="status-dot ${getDeliveryStatusDotClass(order.status_delivery)}"></span>
                             <div style="display: flex; align-items: center; gap: 2px;">
@@ -59,6 +54,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <i class="bi bi-chevron-down"></i>
                             </div>
                         </div>
+                    </span>
+                    <span class="header-info">${escapeHtml(order.shipping_info)}</span>
+                    <span class="header-submitted">${escapeHtml(order.shipping_method)}</span>
+                    <span class="header-total"> $${parseFloat(order.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span class="header-created">${formatDate(order.created_at)}</span>
+                    <span class="header-status">
+                        <a href="order-detail.html?id=${order.id}" title="View order details">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </span>
+                    <span class="header-status">
+                        <button class="delete-order-btn" data-order-id="${order.id}" title="Delete Order" style="background:none;border:none;cursor:pointer;">
+                            <i class="bi bi-trash3"></i>
+                        </button>
                     </span>
                 </div>`;
             container.appendChild(row);
@@ -84,6 +93,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (e.target !== select) {
                     select.focus();
                     select.click();
+                }
+            });
+        });
+        // Add delete button event listeners
+        container.querySelectorAll('.delete-order-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const orderId = this.getAttribute('data-order-id');
+                if (confirm('Are you sure you want to delete this order?')) {
+                    fetch(`/api/admin/orders/${orderId}`, { method: 'DELETE' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.closest('.product-row').remove();
+                                showOrderAlert('Order deleted successfully!', 'success');
+                            } else {
+                                showOrderAlert(data.message || 'Failed to delete order.', 'error');
+                            }
+                        })
+                        .catch(() => showOrderAlert('Failed to delete order.', 'error'));
                 }
             });
         });

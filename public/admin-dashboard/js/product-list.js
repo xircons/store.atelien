@@ -58,7 +58,7 @@ function renderProductGrid(products) {
                     <div class="product-card-id">ID: ${product.id}</div>
                 </span>
             </span>
-            <span class="product-price">$${Number(product.price).toLocaleString()}</span>
+            <span class="product-price">$${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             <span class="product-category">${product.category || '-'}</span>
             <span class="product-status">
                 <i class="bi ${statusIcon} status-toggle ${statusClass}" data-id="${product.id}" data-status="${product.status}" title="Click to toggle status"></i>

@@ -274,6 +274,18 @@ body {
   color: #ff0000;
   font-weight: bold;
 }
+
+/* Error state styles */
+.floating-label-group input.error,
+.floating-label-group textarea.error {
+  border-color: #ff0000 !important;
+}
+
+.floating-label-group input.error:focus,
+.floating-label-group textarea.error:focus {
+  border-color: #ff0000 !important;
+}
+
 .cart-alert {
     position: fixed;
     bottom: 2rem;

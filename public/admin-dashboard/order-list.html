@@ -20,7 +20,7 @@
       }
       .product-row .product-item {
         display: grid !important;
-        grid-template-columns: minmax(50px, 60px) minmax(50px, 60px) 2.5fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr !important;
+        grid-template-columns: minmax(50px, 60px) 1.5fr 1.5fr 2.5fr 1.5fr 1.5fr 1.5fr minmax(50px, 60px) minmax(50px, 60px) !important;
         align-items: start;
         justify-items: start;
         color: rgba(6, 29, 27, 0.8);
@@ -29,15 +29,18 @@
       }
       .product-items-header {
         display: grid;
-        grid-template-columns: minmax(50px, 60px) minmax(50px, 60px) 2.5fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr !important;
+        grid-template-columns: minmax(50px, 60px) 1.5fr 1.5fr 2.5fr 1.5fr 1.5fr 1.5fr minmax(50px, 60px) minmax(50px, 60px) !important;
         align-items: center;
         gap: 1.2rem;
       }
-      .header-info, .header-total, .header-created {
+      .header-info, .header-total, .header-created, .header-status {
         text-align: left;
       }
-      .header-status {
-        text-align: center;
+      .header-status a{
+        color: #2a2a2a;
+      }
+      .header-submitted {
+        text-transform: uppercase;
       }
       .status-dot {
         display: inline-block;
@@ -66,8 +69,8 @@
         gap: 0.4rem;
         cursor: pointer;
         pointer-events: auto;
-        padding: 4px 8px;
-        transition: background-color 0.2s;
+        padding: 0px 8px;
+        transition: backgrond-color 0.2s;
       }
       .status-text {
         font-family: 'Jost', sans-serif;
@@ -170,14 +173,10 @@
       .order-alert .alert-close:hover {
         opacity: 0.8;
       }
-      .total-amount {
-        font-weight: 600;
-        color: #2a2a2a;
-      }
       @media (max-width: 900px) {
         .product-row .product-item,
         .product-items-header {
-          grid-template-columns: 1fr 1fr 2fr 1.5fr 1fr;
+          grid-template-columns: minmax(50px, 60px) minmax(50px, 60px) 2.5fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr !important;
           font-size: 0.92rem;
           gap: 0.7rem;
         }
@@ -213,13 +212,14 @@
             <div class="product-items-section">
                 <div class="product-items-header">
                     <span class="header-product">ID</span>
-                    <span class="header-price">User ID</span>
-                    <span class="header-info">Customer Name</span>
-                    <span class="header-submitted">Shipping Method</span>
-                    <span class="header-total">Total</span>
-                    <span class="header-created">Created At</span>
-                    <span class="header-status">Status</span>
+                    <span class="header-status">Pay Status</span>
                     <span class="header-status">Delivery Status</span>
+                    <span class="header-info">Customer Name</span>
+                    <span class="header-shipping">Shipping</span>
+                    <span class="header-total">Amount Spent</span>
+                    <span class="header-created">Date</span>
+                    <span class="header-status">View</span>
+                    <span class="header-status">Delete</span>
                 </div>
                 <div class="product-items" id="orderItems">
                     <!-- Order rows will be rendered here by order-list.js -->

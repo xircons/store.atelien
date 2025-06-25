@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2025 at 05:03 AM
+-- Generation Time: Jun 25, 2025 at 10:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,32 @@ SET time_zone = "+00:00";
 --
 -- Database: `store.atelien`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contact_us`
+--
+
+CREATE TABLE `contact_us` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('New','Read','Responded') DEFAULT 'New'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `contact_us`
+--
+
+INSERT INTO `contact_us` (`id`, `name`, `email`, `message`, `submitted_at`, `status`) VALUES
+(1, 'Wuttikan', 'admin@atelien.com', '...', '2025-06-25 10:22:36', 'Responded'),
+(2, 'Jaifah', 'admin@atelien.com', '...', '2025-06-25 10:26:12', 'Read'),
+(11, 'Somsak', 'Somsak_Thailand@luv.thai', 'ผมชื่อสมศักดิ์ครับ มีความสนใจที่จะสร้างบ้านใหม่ และกำลังมองหาทีมงานมืออาชีพในการออกแบบทั้งตัวบ้านและภายใน ซึ่งผมได้ชมผลงานของทาง Atelien แล้วรู้สึกประทับใจมากในสไตล์ ความประณีต และแนวทางการออกแบบที่มีเอกลักษณ์\n\nเบื้องต้น ผมอยากพูดคุยเพื่อสอบถามรายละเอียดเพิ่มเติมเกี่ยวกับ:\n\nขั้นตอนการออกแบบบ้านและตกแต่งภายใน\n\nระยะเวลาโดยประมาณในการดำเนินงาน\n\nงบประมาณเบื้องต้น\n\nบริการดูแลโครงการในภาพรวม\n\nหากทางทีมสะดวก ผมยินดีนัดพบเพื่อพูดคุยเพิ่มเติม หรือประชุมออนไลน์ก็ได้ครับ พร้อมนำเสนอแนวคิดและข้อมูลเกี่ยวกับพื้นที่ที่ผมมีอยู่', '2025-06-25 14:55:51', 'New'),
+(12, 'Somjai', 'Somjai_kub@need.new.house', 'I hope this message finds you well.\n\nI’m planning to build a new house and am very interested in working with your team for both the architectural design and interior styling. I admire the aesthetic and attention to detail in your previous projects and believe your approach aligns perfectly with the vision I have for my future home.\n\nAt this stage, I would love to discuss the possibilities, including:\n\nConcept development and design process\n\nBudget and timeline estimation\n\nInterior design consultation and styling\n\nProject management and construction support\n\nPlease let me know a convenient time for us to connect, either in person or virtually. I’m happy to provide initial ideas, inspiration, and details about the land and layout I have in mind.\n\nLooking forward to hearing from you soon.', '2025-06-25 14:57:24', 'New'),
+(16, 'Wuttikan', 'admin@atelien.com', '...', '2025-06-25 20:14:20', 'New');
 
 -- --------------------------------------------------------
 
@@ -46,9 +72,9 @@ CREATE TABLE `discount_coupons` (
 --
 
 INSERT INTO `discount_coupons` (`id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `used_count`, `created_at`, `updated_at`, `status`) VALUES
-(2, 'ATELIEN', 'Special Atelien discount - Save $1000', 'fixed', 1000.00, 0.00, 1, 1, '2025-06-22 22:32:00', '2025-06-25 02:47:33', 'disable'),
-(3, 'WELCOME10', 'Welcome discount - 10% off', 'percentage', 10.00, 1000.00, 200, 102, '2025-06-22 22:32:00', '2025-06-25 02:51:39', 'enable'),
-(4, 'FREETAX', 'Free tax - 7% off', 'percentage', 7.00, 0.00, 0, 0, '2025-06-24 08:07:18', '2025-06-25 02:48:06', 'disable');
+(2, 'ATELIEN', 'Special Atelien discount - Save $1000', 'fixed', 1000.00, 0.00, 50, 1, '2025-06-22 22:32:00', '2025-06-25 19:42:06', 'disable'),
+(4, 'FREETAX', 'Free tax - 7% off', 'percentage', 7.00, 0.00, NULL, 6, '2025-06-24 08:07:18', '2025-06-25 16:18:40', 'enable'),
+(10, 'MAX101', 'All product free for you - 100% off', 'percentage', 100.00, 0.00, 1, 1, '2025-06-25 19:41:44', '2025-06-25 20:21:40', 'enable');
 
 -- --------------------------------------------------------
 
@@ -153,6 +179,7 @@ CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `status` enum('pending','paid','failed','cancelled') NOT NULL DEFAULT 'pending',
+  `status_delivery` enum('pending','in_transit','delivered','failed','cancelled') NOT NULL DEFAULT 'pending',
   `shipping_info` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`shipping_info`)),
   `shipping_method` varchar(50) NOT NULL,
   `discount_code` varchar(50) DEFAULT NULL,
@@ -170,8 +197,19 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `status`, `shipping_info`, `shipping_method`, `discount_code`, `discount_amount`, `subtotal`, `shipping_cost`, `taxes`, `total`, `items`, `created_at`, `updated_at`) VALUES
-(33, 1, 'pending', '{\"firstName\":\"Wuttikan\",\"lastName\":\"Suksan\",\"company\":\"\",\"address\":\"123\",\"apartment\":\"\",\"city\":\"Chiang Mai\",\"state\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0998887777\",\"country\":\"TH\"}', 'express', 'WELCOME10', 400.00, 4000.00, 800.00, 252.00, 4652.00, '[{\"id\":\"40\",\"name\":\"Eileen Bedside Table + Tray\",\"quantity\":1,\"price\":4000,\"image\":\"https://store.leibal.com/cdn/shop/files/eileen-2.jpg?crop=center&height=2048&v=1715395088&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"}]', '2025-06-25 02:53:47', '2025-06-25 02:53:47');
+INSERT INTO `orders` (`id`, `user_id`, `status`, `status_delivery`, `shipping_info`, `shipping_method`, `discount_code`, `discount_amount`, `subtotal`, `shipping_cost`, `taxes`, `total`, `items`, `created_at`, `updated_at`) VALUES
+(37, 1, 'paid', 'delivered', '{\"firstName\":\"Wuttikan\",\"lastName\":\"Suksan\",\"company\":\"\",\"address\":\"123 Nimman Rd\",\"apartment\":\"\",\"city\":\"Chiang Mai\",\"state\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0998887777\",\"country\":\"TH\"}', 'express', 'FREETAX', 1933.33, 27619.00, 800.00, 1798.00, 28283.67, '[{\"id\":\"10\",\"name\":\"O Stool\",\"quantity\":3,\"price\":5800,\"image\":\"https://store.leibal.com/cdn/shop/products/ostool2.jpg?crop=center&height=2048&v=1571439761&width=2048\",\"maker\":\"Estudio Persona\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"30\",\"name\":\"Beam Desk\",\"quantity\":1,\"price\":6300,\"image\":\"https://store.leibal.com/cdn/shop/files/beam-desk-2.jpg?crop=center&height=2048&v=1728424349&width=2048\",\"maker\":\"Marquel Williams\",\"lead_time\":\"8-10 Weeks\"},{\"id\":\"562\",\"name\":\"Primitive Structure\",\"quantity\":1,\"price\":3629,\"image\":\"https://store.leibal.com/cdn/shop/products/2_f94d05a0-cf1d-46d8-ae88-d673ea035fd4.jpg?crop=center&height=2048&v=1573771680&width=2048\",\"maker\":\"Michael Anastassiades\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"53\",\"name\":\"Sphere Oil Diffuser\",\"quantity\":1,\"price\":290,\"image\":\"https://store.leibal.com/cdn/shop/files/Frama-Sphere-Oil-Diffuser-1.jpg?crop=center&height=2048&v=1689729561&width=2048\",\"maker\":\"Frama\",\"lead_time\":\"2-4 Weeks\"}]', '2025-06-25 16:18:47', '2025-06-25 18:27:19'),
+(38, 1, 'paid', 'delivered', '{\"firstName\":\"Somchai\",\"lastName\":\"Jaisai\",\"company\":\"\",\"address\":\"123 Nimman Rd.\",\"apartment\":\"\",\"city\":\"Chiang Mai\",\"state\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0998887777\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 12800.00, 650.00, 896.00, 14346.00, '[{\"id\":\"9\",\"name\":\"Ele Armchair\",\"quantity\":1,\"price\":6400,\"image\":\"https://store.leibal.com/cdn/shop/files/ele-2.jpg?crop=center&height=2048&v=1704599167&width=2048\",\"maker\":\"Jaume Ramirez Studio\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"40\",\"name\":\"Eileen Bedside Table + Tray\",\"quantity\":1,\"price\":4000,\"image\":\"https://store.leibal.com/cdn/shop/files/eileen-2.jpg?crop=center&height=2048&v=1715395088&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"47\",\"name\":\"Large Portal Vase\",\"quantity\":2,\"price\":1200,\"image\":\"https://store.leibal.com/cdn/shop/files/portal-2.jpg?crop=center&height=2048&v=1707531159&width=2048\",\"maker\":\"Origin Made\",\"lead_time\":\"6-8 Weeks\"}]', '2025-06-25 18:17:32', '2025-06-25 20:22:11'),
+(39, 13, 'cancelled', 'cancelled', '{\"firstName\":\"Shoksan\",\"lastName\":\"Pluemjai\",\"company\":\"\",\"address\":\"112 Nimman Rd.\",\"apartment\":\"\",\"city\":\"Chiang Mai\",\"state\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0998887777\",\"country\":\"TH\"}', 'express', 'ATELIEN', 1000.00, 43810.00, 800.00, 2996.70, 46606.70, '[{\"id\":\"53\",\"name\":\"Sphere Oil Diffuser\",\"quantity\":3,\"price\":290,\"image\":\"https://store.leibal.com/cdn/shop/files/Frama-Sphere-Oil-Diffuser-1.jpg?crop=center&height=2048&v=1689729561&width=2048\",\"maker\":\"Frama\",\"lead_time\":\"2-4 Weeks\"},{\"id\":\"29\",\"name\":\"THEWALL#07\",\"quantity\":2,\"price\":9145,\"image\":\"https://store.leibal.com/cdn/shop/files/the-wall-07-01.jpg?crop=center&height=2048&v=1724704828&width=2048\",\"maker\":\"Sing Chan\",\"lead_time\":\"6-8 Weeks\"},{\"id\":\"39\",\"name\":\"OBJ-04 Shelf\",\"quantity\":1,\"price\":9500,\"image\":\"https://store.leibal.com/cdn/shop/files/obj-4-1.jpg?crop=center&height=2048&v=1712099900&width=2048\",\"maker\":\"Manu Bano\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"4\",\"name\":\"Marina Sofa\",\"quantity\":1,\"price\":13750,\"image\":\"https://store.leibal.com/cdn/shop/files/marina-2.jpg?crop=center&height=2048&v=1715395591&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"},{\"id\":\"48\",\"name\":\"Bowl\",\"quantity\":1,\"price\":1400,\"image\":\"https://store.leibal.com/cdn/shop/files/bowl-lime-4.jpg?crop=center&height=2048&v=1705695003&width=2048\",\"maker\":\"whenobjectswork\",\"lead_time\":\"6-8 Weeks\"}]', '2025-06-25 18:26:52', '2025-06-25 18:27:31'),
+(100, 13, 'paid', 'in_transit', '{\"firstName\": \"Pongchai\", \"lastName\": \"Rattanachai\", \"address\": \"123 Test Road\", \"city\": \"Bangkok\", \"zip\": \"10110\", \"phone\": \"0891234567\", \"country\": \"TH\"}', 'express', NULL, 0.00, 9720.00, 850.00, 680.40, 11250.40, '[{\"id\": 559, \"name\": \"ARV Dining Chair with Armrest - Woven\", \"quantity\": 2, \"price\": 1960.0}, {\"id\": 10, \"name\": \"O Stool\", \"quantity\": 1, \"price\": 5800.0}]', '2025-06-09 11:31:15', '2025-06-25 11:31:15'),
+(101, 1, 'paid', 'in_transit', '{\"firstName\": \"Sudarat\", \"lastName\": \"Meesuk\", \"address\": \"123 Test Road\", \"city\": \"Bangkok\", \"zip\": \"10110\", \"phone\": \"0891234567\", \"country\": \"TH\"}', 'standard', 'WELCOME10', 2562.90, 25629.00, 650.00, 1614.63, 25330.73, '[{\"id\": 3, \"name\": \"OBJ-05 Chair\", \"quantity\": 1, \"price\": 18000.0}, {\"id\": 40, \"name\": \"Eileen Bedside Table + Tray\", \"quantity\": 1, \"price\": 4000.0}, {\"id\": 562, \"name\": \"Primitive Structure\", \"quantity\": 1, \"price\": 3629.0}]', '2025-06-13 11:31:15', '2025-06-25 11:31:15'),
+(102, 1, 'pending', 'pending', '{\"firstName\":\"Korn\",\"lastName\":\"Sirimongkol\",\"address\":\"12 Nimmanhaemin\",\"city\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0812345678\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 17375.00, 650.00, 1216.25, 19241.25, '[{\"id\":31,\"name\":\"Puffball Cloud Pendant\",\"quantity\":1,\"price\":17375}]', '2025-06-25 18:32:41', '2025-06-25 18:33:39'),
+(103, 13, 'paid', 'pending', '{\"firstName\":\"Natasha\",\"lastName\":\"Vilas\",\"address\":\"456 Rama 9\",\"city\":\"Bangkok\",\"zip\":\"10310\",\"phone\":\"0858889999\",\"country\":\"TH\"}', 'express', 'WELCOME10', 1960.00, 19600.00, 850.00, 1372.00, 19862.00, '[{\"id\":559,\"name\":\"ARV Dining Chair with Armrest - Woven\",\"quantity\":10,\"price\":1960}]', '2025-06-25 18:32:41', '2025-06-25 18:32:41'),
+(104, 1, 'failed', 'cancelled', '{\"firstName\":\"Akkharawat\",\"lastName\":\"Meechai\",\"address\":\"75 Sirimangkalajarn\",\"city\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0865566778\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 4130.00, 650.00, 289.10, 5069.10, '[{\"id\":12,\"name\":\"Arv Lounge Chair\",\"quantity\":1,\"price\":3840},{\"id\":53,\"name\":\"Sphere Oil Diffuser\",\"quantity\":1,\"price\":290}]', '2025-06-25 18:32:41', '2025-06-25 18:33:29'),
+(105, 1, 'paid', 'in_transit', '{\"firstName\":\"Korn\",\"lastName\":\"Sirimongkol\",\"address\":\"12 Nimmanhaemin\",\"city\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0812345678\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 17375.00, 650.00, 1216.25, 19241.25, '[{\"id\":31,\"name\":\"Puffball Cloud Pendant\",\"quantity\":1,\"price\":17375}]', '2025-06-25 18:32:51', '2025-06-25 18:32:51'),
+(106, 13, 'paid', 'pending', '{\"firstName\":\"Natasha\",\"lastName\":\"Vilas\",\"address\":\"456 Rama 9\",\"city\":\"Bangkok\",\"zip\":\"10310\",\"phone\":\"0858889999\",\"country\":\"TH\"}', 'express', 'WELCOME10', 1960.00, 19600.00, 850.00, 1372.00, 19862.00, '[{\"id\":559,\"name\":\"ARV Dining Chair with Armrest - Woven\",\"quantity\":10,\"price\":1960}]', '2025-06-25 18:32:51', '2025-06-25 18:32:51'),
+(107, 1, 'pending', 'pending', '{\"firstName\":\"Akkharawat\",\"lastName\":\"Meechai\",\"address\":\"75 Sirimangkalajarn\",\"city\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0865566778\",\"country\":\"TH\"}', 'standard', NULL, 0.00, 4130.00, 650.00, 289.10, 5069.10, '[{\"id\":12,\"name\":\"Arv Lounge Chair\",\"quantity\":1,\"price\":3840},{\"id\":53,\"name\":\"Sphere Oil Diffuser\",\"quantity\":1,\"price\":290}]', '2025-06-25 18:32:51', '2025-06-25 18:32:51'),
+(108, 18, 'pending', 'pending', '{\"firstName\":\"Wuttikan\",\"lastName\":\"Suksan\",\"company\":\"Chiang Mai university\",\"address\":\"123 Nimman Rd.\",\"apartment\":\"\",\"city\":\"Chiang Mai\",\"state\":\"Chiang Mai\",\"zip\":\"50000\",\"phone\":\"0998887777\",\"country\":\"TH\"}', 'standard', 'MAX100', 27500.00, 27500.00, 650.00, 0.00, 650.00, '[{\"id\":\"4\",\"name\":\"Marina Sofa\",\"quantity\":2,\"price\":13750,\"image\":\"https://store.leibal.com/cdn/shop/files/marina-2.jpg?crop=center&height=2048&v=1715395591&width=2048\",\"maker\":\"Obstacles\",\"lead_time\":\"10-12 Weeks\"}]', '2025-06-25 20:17:14', '2025-06-25 20:17:14');
 
 -- --------------------------------------------------------
 
@@ -199,7 +237,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `cost_price`, `category`, `image`, `image_hover`, `maker`, `lead_time`, `created_at`, `status`) VALUES
-(2, 'PK24 - Wicker', 'The PK24™ Chaise Longue, one of the most distinguished pieces in Fritz Hansen\'s Poul Kjærholm collection, seamlessly blends historical influence with modern materials and methods. Drawing inspiration from the Rococo period and the French chaise longue, Kjærholm reimagined the concept using steel, rendering a support system for a smoothly flowing form. Known also as the \'Hammock Chair\', the PK24™ puts forward a unique design principle — suspending the body between two points. This structural design underscores the practical function of the chair, offering unparalleled comfort while maintaining a sculptural, fluid aesthetic.\r\n\r\nThe chair’s flowing form, achieved through Kjærholm\'s ingenious use of steel, offers a seamless blend of strength and elegance. It captures the essence of modern design while hinting at historical periods, creating a timeless piece that appeals to a wide range of aesthetics. For architects and design professionals, the PK24™ Chaise Longue is not just a chair; it is an embodiment of innovative design that draws from the past while shaping the future. Whether placed in a minimalist workspace or a classical interior, the PK24™ brings both style and function, making a bold statement about the appreciation of enduring design.', 26847.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/pk24-wicker-black-2.jpg?crop=center&height=2048&v=1685310872&width=2048', NULL, 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
+(2, 'PK24 - Wicker', 'The PK24™ Chaise Longue, one of the most distinguished pieces in Fritz Hansen\'s Poul Kjærholm collection, seamlessly blends historical influence with modern materials and methods. Drawing inspiration from the Rococo period and the French chaise longue, Kjærholm reimagined the concept using steel, rendering a support system for a smoothly flowing form. Known also as the \'Hammock Chair\', the PK24™ puts forward a unique design principle — suspending the body between two points. This structural design underscores the practical function of the chair, offering unparalleled comfort while maintaining a sculptural, fluid aesthetic.\n\nThe chair’s flowing form, achieved through Kjærholm\'s ingenious use of steel, offers a seamless blend of strength and elegance. It captures the essence of modern design while hinting at historical periods, creating a timeless piece that appeals to a wide range of aesthetics. For architects and design professionals, the PK24™ Chaise Longue is not just a chair; it is an embodiment of innovative design that draws from the past while shaping the future. Whether placed in a minimalist workspace or a classical interior, the PK24™ brings both style and function, making a bold statement about the appreciation of enduring design.', 26847.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/pk24-wicker-black-2.jpg?crop=center&height=2048&v=1685310872&width=2048', NULL, 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'enable'),
 (3, 'OBJ-05 Chair', 'Manu Bañó\'s latest series delves into the capabilities and boundaries of copper, crafted in the enchanting town of Santa Clara del Cobre, Michoacán, Mexico, renowned for its extensive goldsmith heritage and craftsmen skilled in creating diminutive copper items like pots and vessels. This collection features three items: a chair, a coffee table, and a wall lamp. Each piece is meticulously shaped by hand from a slender copper sheet. The manual hammering process not only fortifies the material but also adds a three-dimensional quality to the designs.', 18000.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/obj-05-2.jpg?crop=center&height=2048&v=1713210368&width=2048', 'https://store.leibal.com/cdn/shop/files/obj-05-1.jpg?crop=center&height=2048&v=1713210368&width=2048', 'Manu Bano', '10-12 Weeks', '2025-06-21 16:33:49', 'enable'),
 (4, 'Marina Sofa', 'In contrast to Crude\'s signature clean-lined designs, the Marina Sofa stands out with its understated curvature, adding a touch of elegance to any space. Crafted with an oak veneered frame, its versatility shines through with removable marble powder backrests, effortlessly transforming it into a luxurious chaise lounge. With a blend of natural and synthetic feather cushions, it offers a hypoallergenic seating solution. Tailored to fit any project, its size and wood frame color can be customized, while a diverse selection of linen upholstery colors ensures a perfect match for every client\'s preferences.', 13750.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/marina-2.jpg?crop=center&height=2048&v=1715395591&width=2048', 'https://store.leibal.com/cdn/shop/files/marina-1.jpg?crop=center&height=2048&v=1715395592&width=2048', 'Obstacles', '10-12 Weeks', '2025-06-21 16:33:49', 'enable'),
 (5, 'Nido Sofa', 'The Nido Sofa is a creative interpretation of the interplay between contrasting shapes. The design features a leather upholstered wooden seat, possessing an egg-like form that nestles within the sofa\'s solid wood frame crafted in a cross shape. This thoughtful juxtaposition of shapes gives the sofa its name - Nido, which translates to \'nest\' in Spanish. Built on a base available in either walnut or white oak, the Nido Sofa embodies a fusion of style and stability. Its strong lines offer a robust foundation, which, when coupled with the soft and round contours of the leather seat, creates a piece that prioritizes both comfort and design aesthetic.\r\n\r\nThe Nido Sofa goes beyond being a seating solution; it represents a playful blend of shapes, materials, and comfort. The union of its distinctive rounded seat and solid cross-shaped base creates a dynamic visual interest, making the Nido Sofa a focal point in any space. For design professionals and architects, the Nido Sofa embodies the harmony of geometric interplay and comfort. Whether it\'s integrated into a modern minimalist setting or a more traditional interior, the Nido enhances the ambiance with its distinctive design and comfortable appeal. It stands as a testament to the power of thoughtful and innovative design in furniture.', 12000.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/files/nido-sofa-black-front.jpg?crop=center&height=2048&v=1685405450&width=2048', 'https://store.leibal.com/cdn/shop/products/nido5.jpg?crop=center&height=2048&v=1685405450&width=2048', 'Estudio Persona', '10-12 Weeks', '2025-06-21 16:33:49', 'disable'),
@@ -241,12 +279,10 @@ INSERT INTO `products` (`id`, `name`, `description`, `price`, `cost_price`, `cat
 (54, 'Ceramic Orchid Pot', 'Handcrafted by talented ceramic artisans in Europe, the Black Ceramic Orchid Pot is a one-of-a-kind creation, individually made and varying slightly in size. This exquisite vessel is meticulously crafted to accommodate orchids and an array of plants with elegance. Each piece is unique due to its handmade nature, boasting a water-resistant glazed finish. We recommend hand washing for optimal care.', 248.00, NULL, 'accessories', 'https://store.leibal.com/cdn/shop/files/orchid-pot-black-2.jpg?crop=center&height=2048&v=1720213304&width=2048', 'https://store.leibal.com/cdn/shop/files/orchid-pot-black-1.jpg?crop=center&height=2048&v=1720213305&width=2048', 'Devon Liedtke', '2-4 Weeks', '2025-06-21 16:33:49', 'enable'),
 (55, 'Offcut 01', 'Lærke Ryom\' Offcut Collection explores the aesthetics of end grain and is made with the intention of emphasizing the potential of the byproduct from Dinesen’s flooring production. The rhythmic shapes, characterizing the fourteen objects, originates from the existing width and sizes determined by the production. Considering the patterning appearing when offsetting and stacking material elements, the collection pays tribute to the natural ornamentation of the grain. Both shape and ornament thereby originate from the material itself, offering a new aesthetic perspective and experience of the familiar material. Offcut Collection is made of Douglas offcuts kindly granted by Dinesen.', 2600.00, NULL, 'tables', 'https://store.leibal.com/cdn/shop/files/offcut-1.jpg?crop=center&height=2048&v=1698576683&width=2048', 'https://store.leibal.com/cdn/shop/files/offcut-2.jpg?crop=center&height=2048&v=1698576682&width=2048', 'Lærke Ryom', '2-4 Weeks', '2025-06-21 16:33:49', 'enable'),
 (56, 'PK61', 'The PK61™ Coffee Table is an emblem of Poul Kjærholm\'s minimalist design philosophy. Embodying a square aesthetic design, this table is a powerful testament to Kjærholm\'s evolution from an industrial designer to an acclaimed furniture architect. Minimalist yet impactful, the PK61™ showcases the power of simplicity in design. Its square form and sleek lines are a visual distillation of Kjærholm\'s approach to furniture design, where every element serves a purpose and nothing is superfluous. The PK61™ Coffee Table, while serving its primary function, also acts as a design manifesto, showcasing Kjærholm\'s distinct design principles.', 6256.00, NULL, 'tables', 'https://store.leibal.com/cdn/shop/files/pk61-glass.jpg?crop=center&height=2048&v=1685323681&width=2048', 'https://store.leibal.com/cdn/shop/files/pk61-white.jpg?crop=center&height=2048&v=1685323681&width=2048', 'Fritz Hansen', '10-12 Weeks', '2025-06-21 16:33:49', 'enable'),
-(57, 'ST02 Side Table', 'ST02 is a minimal side table created by Rotterdam-based designer Johan Viladrich. Constructed of waxed aluminum, the seat utilizes a perpendicular geometry to maintain its stability. Consistent with his design typology, the screws are left exposed joining the sheets together. In total, six plates are used to compose the structure.', 1285.00, NULL, 'tables', 'https://store.leibal.com/cdn/shop/files/ast-1.jpg?crop=center&height=2048&v=1698260320&width=2048', 'https://store.leibal.com/cdn/shop/files/ast-2.jpg?crop=center&height=2048&v=1698260321&width=2048', 'Johan Viladrich', '8-10 Weeks', '2025-06-21 16:33:49', 'enable'),
 (559, 'ARV Dining Chair with Armrest - Woven', 'The award-winning Arv chair draws on the classic virtues of Danish Modern design with timeless qualities, yet it has the spirit of a new generation. The conceptual design feature is a ‘branch’ formation that organically connects the different parts – like branches growing from a tree trunk. Originally designed for Noma Restaurant in Copenhagen, David Thulstrup created the ARV collection to compliment the spirit of the space.', 1960.00, NULL, 'seating', 'https://store.leibal.com/cdn/shop/products/woven_arm_whiteoak.jpg?crop=center&height=2048&v=1687100311&width=2048', 'https://store.leibal.com/cdn/shop/files/back_woven_whiteoak.jpg?crop=center&height=2048&v=1687101963&width=2048', 'Brdr. Krüger', '12-14 Weeks', '2025-06-22 12:30:27', 'enable'),
 (561, 'NM02', 'The NM02 Coffee Table, designed by NM3 in Milan in 2022, is constructed from stainless steel and is available in 3mm BA inox steel, 3mm hot rolled black iron, 3mm pickled iron, or powder-coated with custom RAL finishes. The NM02 features a minimalist, linear form achieved through 2D numerical control cutting and dry assembly. Its design emphasizes geometric precision and functional simplicity, with untreated surfaces that highlight the raw qualities of the material. The NM02 is made to order within a 10–12 week lead time and is produced exclusively in Italy, specifically within Milan’s local supply chain. NM3’s production approach prioritizes sustainability through the use of 100% recyclable materials and small-batch manufacturing to prevent overproduction. The robust metal construction reflects a focus on durability, intended to ensure long-term use.', 2860.00, NULL, 'tables', 'https://store.leibal.com/cdn/shop/files/nm02.jpg?crop=center&height=2048&v=1739936390&width=2048', 'https://store.leibal.com/cdn/shop/files/nm02-3.jpg?crop=center&height=2048&v=1739936559&width=2048', 'NM3', '10-12 Weeks', '2025-06-23 20:35:23', 'enable'),
 (562, 'Primitive Structure', 'Primitive Structure is Michael Anastassiades’ first task light. Simply stacked in a T-shape are two geometric rectangular forms of black anodized aluminum. The point where they rest is the point of rotation allowing for a sequence of dimmable light that alternates on a 180 degree pivot. The task light is wireless allowing the user the flexibility of placing it in any possible location. This lamp has a battery life of eight hours and can be recharged by USB.', 3629.00, NULL, 'lighting', 'https://store.leibal.com/cdn/shop/products/2_f94d05a0-cf1d-46d8-ae88-d673ea035fd4.jpg?crop=center&height=2048&v=1573771680&width=2048', 'https://store.leibal.com/cdn/shop/products/3_a193e190-5d5e-43e8-8962-78ba6cefb10c.jpg?crop=center&height=2048&v=1573771644&width=2048', 'Michael Anastassiades', '10-12 Weeks', '2025-06-23 22:41:21', 'enable'),
-(563, 'Pagoda#03', 'The Pagoda#02 display case draws inspiration from the poetic solitude of ancient frontier landscapes, encapsulating the essence of distant horizons and the enduring passage of time. This design presents a deliberate openness, revealing the raw, unpolished beauty of the metal, a nod to the impermanence and evolution of materials. The exposed surfaces invite interaction, allowing the subtle imprints of human touch—sweat, oil, and time itself—to alter the piece organically. Each contact leaves a mark, creating a unique narrative that echoes the meditative experiences of poets who journeyed to the edges of the known world, confronting the stark contrast between civilization and the vast, uncharted wilderness. The Pagoda#02 is not just a display case; it’s a canvas for personal history, evolving with each encounter, and capturing the quiet, contemplative spirit of those who once wandered the frontiers.', 7680.00, NULL, 'storage', 'https://store.leibal.com/cdn/shop/files/pagoda-3-1.jpg?crop=center&height=2048&v=1725309834&width=2048', 'https://store.leibal.com/cdn/shop/files/pagoda-3-2.jpg?crop=center&height=2048&v=1725309834&width=2048', 'Sing Chan', '4-6 Weeks', '2025-06-23 22:44:33', 'enable'),
-(567, 'Cloud Bar CL_180', 'Inspired by the floating concept of a cloud, the Cloud Bar functions as a bar or storage space; its illuminatio aesthetically pleasing and decorative. Its mounting system is designed for wall attachment, adding a sense of weightlessness. The doors are designed to slide rather than fold, preserving the flow of the space and encouraging interaction with the piece.', 12493.00, 1200.00, 'storage', 'https://store.leibal.com/cdn/shop/files/cloudbar-180-2.jpg?crop=center&height=2048&v=1714004499&width=2048', 'https://store.leibal.com/cdn/shop/files/cloudbar-180-3.jpg?crop=center&height=2048&v=1714004656&width=2048', 'PPAA', '12-14 Weeks', '2025-06-25 02:44:33', 'enable');
+(569, 'Puru Side Table', 'The Puru Side Table embodies the elegance of simplicity, using only two elements represented by two distinct materials - wood and stainless steel. Inspired by the Japanese concept of \'Puru\', meaning \'pool\', the table showcases a unique interplay of materials, the waxed white oak contrasting beautifully against the polished stainless steel. The combination of these materials creates a mirror-like effect, symbolically reflecting each element\'s dependency on the other. The polished stainless steel provides a sleek and modern base, while the waxed white oak top offers a warm and organic touch, the juxtaposition creating an intriguing visual appeal.\n\nThe Puru Side Table is more than a functional piece of furniture; it\'s a manifestation of minimalist beauty and harmonious material coexistence. The design encapsulates a philosophy of simplicity, echoing the need for balance and symbiosis in design. For design professionals and architects, the Puru Side Table is a testament to the power of minimalistic design and the careful selection of materials. Whether integrated into a contemporary setting or a more traditional interior, the Puru Side Table brings a harmonious balance and simplistic elegance to any space. It\'s not just a side table; it\'s a piece of design philosophy encapsulated in wood and steel.', 2700.00, 20.00, 'tables', 'https://store.leibal.com/cdn/shop/products/gallery1_7bad894a-8c94-44cd-8284-c8462b867729.jpg?crop=center&height=2048&v=1571439757&width=2048', 'https://store.leibal.com/cdn/shop/products/gallery3_9b01d499-a91e-4ac1-a6f8-7e09f7ddd6a6.jpg?crop=center&height=2048&v=1571439757&width=2048', 'Estudio Persona', '6-8 Weeks', '2025-06-25 20:21:21', 'enable');
 
 -- --------------------------------------------------------
 
@@ -310,11 +346,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1434, 54, 2024, 1, 14, '2025-06-24 11:56:56'),
 (1435, 55, 2024, 1, 4, '2025-06-24 11:56:56'),
 (1436, 56, 2024, 1, 6, '2025-06-24 11:56:56'),
-(1437, 57, 2024, 1, 9, '2025-06-24 11:56:56'),
 (1438, 559, 2024, 1, 5, '2025-06-24 11:56:56'),
 (1439, 561, 2024, 1, 7, '2025-06-24 11:56:56'),
 (1440, 562, 2024, 1, 6, '2025-06-24 11:56:56'),
-(1441, 563, 2024, 1, 3, '2025-06-24 11:56:56'),
 (1443, 2, 2024, 2, 3, '2025-06-24 11:56:56'),
 (1444, 3, 2024, 2, 3, '2025-06-24 11:56:56'),
 (1445, 4, 2024, 2, 2, '2025-06-24 11:56:56'),
@@ -357,11 +391,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1483, 54, 2024, 2, 9, '2025-06-24 11:56:56'),
 (1484, 55, 2024, 2, 6, '2025-06-24 11:56:56'),
 (1485, 56, 2024, 2, 3, '2025-06-24 11:56:56'),
-(1486, 57, 2024, 2, 7, '2025-06-24 11:56:56'),
 (1487, 559, 2024, 2, 10, '2025-06-24 11:56:56'),
 (1488, 561, 2024, 2, 6, '2025-06-24 11:56:56'),
 (1489, 562, 2024, 2, 4, '2025-06-24 11:56:56'),
-(1490, 563, 2024, 2, 4, '2025-06-24 11:56:56'),
 (1492, 2, 2024, 3, 2, '2025-06-24 11:56:56'),
 (1493, 3, 2024, 3, 3, '2025-06-24 11:56:56'),
 (1494, 4, 2024, 3, 2, '2025-06-24 11:56:56'),
@@ -404,11 +436,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1532, 54, 2024, 3, 15, '2025-06-24 11:56:56'),
 (1533, 55, 2024, 3, 6, '2025-06-24 11:56:56'),
 (1534, 56, 2024, 3, 3, '2025-06-24 11:56:56'),
-(1535, 57, 2024, 3, 10, '2025-06-24 11:56:56'),
 (1536, 559, 2024, 3, 10, '2025-06-24 11:56:56'),
 (1537, 561, 2024, 3, 8, '2025-06-24 11:56:56'),
 (1538, 562, 2024, 3, 6, '2025-06-24 11:56:56'),
-(1539, 563, 2024, 3, 3, '2025-06-24 11:56:56'),
 (1541, 2, 2024, 4, 3, '2025-06-24 11:56:56'),
 (1542, 3, 2024, 4, 1, '2025-06-24 11:56:56'),
 (1543, 4, 2024, 4, 5, '2025-06-24 11:56:56'),
@@ -451,11 +481,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1581, 54, 2024, 4, 9, '2025-06-24 11:56:56'),
 (1582, 55, 2024, 4, 6, '2025-06-24 11:56:56'),
 (1583, 56, 2024, 4, 4, '2025-06-24 11:56:56'),
-(1584, 57, 2024, 4, 9, '2025-06-24 11:56:56'),
 (1585, 559, 2024, 4, 9, '2025-06-24 11:56:56'),
 (1586, 561, 2024, 4, 4, '2025-06-24 11:56:56'),
 (1587, 562, 2024, 4, 4, '2025-06-24 11:56:56'),
-(1588, 563, 2024, 4, 4, '2025-06-24 11:56:56'),
 (1590, 2, 2024, 5, 1, '2025-06-24 11:56:56'),
 (1591, 3, 2024, 5, 1, '2025-06-24 11:56:56'),
 (1592, 4, 2024, 5, 2, '2025-06-24 11:56:56'),
@@ -498,11 +526,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1630, 54, 2024, 5, 11, '2025-06-24 11:56:56'),
 (1631, 55, 2024, 5, 7, '2025-06-24 11:56:56'),
 (1632, 56, 2024, 5, 4, '2025-06-24 11:56:56'),
-(1633, 57, 2024, 5, 5, '2025-06-24 11:56:56'),
 (1634, 559, 2024, 5, 7, '2025-06-24 11:56:56'),
 (1635, 561, 2024, 5, 8, '2025-06-24 11:56:56'),
 (1636, 562, 2024, 5, 6, '2025-06-24 11:56:56'),
-(1637, 563, 2024, 5, 4, '2025-06-24 11:56:56'),
 (1639, 2, 2024, 6, 3, '2025-06-24 11:56:56'),
 (1640, 3, 2024, 6, 1, '2025-06-24 11:56:56'),
 (1641, 4, 2024, 6, 3, '2025-06-24 11:56:56'),
@@ -545,11 +571,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1679, 54, 2024, 6, 15, '2025-06-24 11:56:56'),
 (1680, 55, 2024, 6, 6, '2025-06-24 11:56:56'),
 (1681, 56, 2024, 6, 5, '2025-06-24 11:56:56'),
-(1682, 57, 2024, 6, 10, '2025-06-24 11:56:56'),
 (1683, 559, 2024, 6, 10, '2025-06-24 11:56:56'),
 (1684, 561, 2024, 6, 6, '2025-06-24 11:56:56'),
 (1685, 562, 2024, 6, 8, '2025-06-24 11:56:56'),
-(1686, 563, 2024, 6, 4, '2025-06-24 11:56:56'),
 (1688, 2, 2024, 7, 3, '2025-06-24 11:56:56'),
 (1689, 3, 2024, 7, 2, '2025-06-24 11:56:56'),
 (1690, 4, 2024, 7, 4, '2025-06-24 11:56:56'),
@@ -592,11 +616,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1728, 54, 2024, 7, 9, '2025-06-24 11:56:56'),
 (1729, 55, 2024, 7, 7, '2025-06-24 11:56:56'),
 (1730, 56, 2024, 7, 4, '2025-06-24 11:56:56'),
-(1731, 57, 2024, 7, 5, '2025-06-24 11:56:56'),
 (1732, 559, 2024, 7, 6, '2025-06-24 11:56:56'),
 (1733, 561, 2024, 7, 8, '2025-06-24 11:56:56'),
 (1734, 562, 2024, 7, 6, '2025-06-24 11:56:56'),
-(1735, 563, 2024, 7, 4, '2025-06-24 11:56:56'),
 (1737, 2, 2024, 8, 2, '2025-06-24 11:56:56'),
 (1738, 3, 2024, 8, 3, '2025-06-24 11:56:56'),
 (1739, 4, 2024, 8, 3, '2025-06-24 11:56:56'),
@@ -639,11 +661,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1777, 54, 2024, 8, 8, '2025-06-24 11:56:56'),
 (1778, 55, 2024, 8, 7, '2025-06-24 11:56:56'),
 (1779, 56, 2024, 8, 5, '2025-06-24 11:56:56'),
-(1780, 57, 2024, 8, 10, '2025-06-24 11:56:56'),
 (1781, 559, 2024, 8, 7, '2025-06-24 11:56:56'),
 (1782, 561, 2024, 8, 6, '2025-06-24 11:56:56'),
 (1783, 562, 2024, 8, 5, '2025-06-24 11:56:56'),
-(1784, 563, 2024, 8, 3, '2025-06-24 11:56:56'),
 (1786, 2, 2024, 9, 2, '2025-06-24 11:56:56'),
 (1787, 3, 2024, 9, 1, '2025-06-24 11:56:56'),
 (1788, 4, 2024, 9, 5, '2025-06-24 11:56:56'),
@@ -686,11 +706,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1826, 54, 2024, 9, 15, '2025-06-24 11:56:56'),
 (1827, 55, 2024, 9, 5, '2025-06-24 11:56:56'),
 (1828, 56, 2024, 9, 4, '2025-06-24 11:56:56'),
-(1829, 57, 2024, 9, 9, '2025-06-24 11:56:56'),
 (1830, 559, 2024, 9, 7, '2025-06-24 11:56:56'),
 (1831, 561, 2024, 9, 5, '2025-06-24 11:56:56'),
 (1832, 562, 2024, 9, 4, '2025-06-24 11:56:56'),
-(1833, 563, 2024, 9, 4, '2025-06-24 11:56:56'),
 (1835, 2, 2024, 10, 3, '2025-06-24 11:56:56'),
 (1836, 3, 2024, 10, 2, '2025-06-24 11:56:56'),
 (1837, 4, 2024, 10, 2, '2025-06-24 11:56:56'),
@@ -733,11 +751,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1875, 54, 2024, 10, 9, '2025-06-24 11:56:56'),
 (1876, 55, 2024, 10, 6, '2025-06-24 11:56:56'),
 (1877, 56, 2024, 10, 5, '2025-06-24 11:56:56'),
-(1878, 57, 2024, 10, 9, '2025-06-24 11:56:56'),
 (1879, 559, 2024, 10, 8, '2025-06-24 11:56:56'),
 (1880, 561, 2024, 10, 6, '2025-06-24 11:56:56'),
 (1881, 562, 2024, 10, 5, '2025-06-24 11:56:56'),
-(1882, 563, 2024, 10, 3, '2025-06-24 11:56:56'),
 (1884, 2, 2024, 11, 1, '2025-06-24 11:56:56'),
 (1885, 3, 2024, 11, 3, '2025-06-24 11:56:56'),
 (1886, 4, 2024, 11, 2, '2025-06-24 11:56:56'),
@@ -780,11 +796,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1924, 54, 2024, 11, 8, '2025-06-24 11:56:56'),
 (1925, 55, 2024, 11, 4, '2025-06-24 11:56:56'),
 (1926, 56, 2024, 11, 6, '2025-06-24 11:56:56'),
-(1927, 57, 2024, 11, 10, '2025-06-24 11:56:56'),
 (1928, 559, 2024, 11, 10, '2025-06-24 11:56:56'),
 (1929, 561, 2024, 11, 5, '2025-06-24 11:56:56'),
 (1930, 562, 2024, 11, 5, '2025-06-24 11:56:56'),
-(1931, 563, 2024, 11, 4, '2025-06-24 11:56:56'),
 (1933, 2, 2024, 12, 2, '2025-06-24 11:56:56'),
 (1934, 3, 2024, 12, 2, '2025-06-24 11:56:56'),
 (1935, 4, 2024, 12, 5, '2025-06-24 11:56:56'),
@@ -827,11 +841,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (1973, 54, 2024, 12, 9, '2025-06-24 11:56:56'),
 (1974, 55, 2024, 12, 8, '2025-06-24 11:56:56'),
 (1975, 56, 2024, 12, 3, '2025-06-24 11:56:56'),
-(1976, 57, 2024, 12, 10, '2025-06-24 11:56:56'),
 (1977, 559, 2024, 12, 9, '2025-06-24 11:56:56'),
 (1978, 561, 2024, 12, 7, '2025-06-24 11:56:56'),
 (1979, 562, 2024, 12, 5, '2025-06-24 11:56:56'),
-(1980, 563, 2024, 12, 5, '2025-06-24 11:56:56'),
 (1982, 2, 2025, 1, 3, '2025-06-24 11:56:56'),
 (1983, 3, 2025, 1, 1, '2025-06-24 11:56:56'),
 (1984, 4, 2025, 1, 5, '2025-06-24 11:56:56'),
@@ -874,11 +886,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2022, 54, 2025, 1, 13, '2025-06-24 11:56:56'),
 (2023, 55, 2025, 1, 4, '2025-06-24 11:56:56'),
 (2024, 56, 2025, 1, 5, '2025-06-24 11:56:56'),
-(2025, 57, 2025, 1, 9, '2025-06-24 11:56:56'),
 (2026, 559, 2025, 1, 8, '2025-06-24 11:56:56'),
 (2027, 561, 2025, 1, 4, '2025-06-24 11:56:56'),
 (2028, 562, 2025, 1, 8, '2025-06-24 11:56:56'),
-(2029, 563, 2025, 1, 5, '2025-06-24 11:56:56'),
 (2031, 2, 2025, 2, 1, '2025-06-24 11:56:56'),
 (2032, 3, 2025, 2, 2, '2025-06-24 11:56:56'),
 (2033, 4, 2025, 2, 5, '2025-06-24 11:56:56'),
@@ -921,11 +931,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2071, 54, 2025, 2, 9, '2025-06-24 11:56:56'),
 (2072, 55, 2025, 2, 4, '2025-06-24 11:56:56'),
 (2073, 56, 2025, 2, 6, '2025-06-24 11:56:56'),
-(2074, 57, 2025, 2, 5, '2025-06-24 11:56:56'),
 (2075, 559, 2025, 2, 5, '2025-06-24 11:56:56'),
 (2076, 561, 2025, 2, 5, '2025-06-24 11:56:56'),
 (2077, 562, 2025, 2, 4, '2025-06-24 11:56:56'),
-(2078, 563, 2025, 2, 4, '2025-06-24 11:56:56'),
 (2080, 2, 2025, 3, 2, '2025-06-24 11:56:56'),
 (2081, 3, 2025, 3, 2, '2025-06-24 11:56:56'),
 (2082, 4, 2025, 3, 2, '2025-06-24 11:56:56'),
@@ -968,11 +976,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2120, 54, 2025, 3, 11, '2025-06-24 11:56:56'),
 (2121, 55, 2025, 3, 8, '2025-06-24 11:56:56'),
 (2122, 56, 2025, 3, 6, '2025-06-24 11:56:56'),
-(2123, 57, 2025, 3, 8, '2025-06-24 11:56:56'),
 (2124, 559, 2025, 3, 6, '2025-06-24 11:56:56'),
 (2125, 561, 2025, 3, 5, '2025-06-24 11:56:56'),
 (2126, 562, 2025, 3, 8, '2025-06-24 11:56:56'),
-(2127, 563, 2025, 3, 6, '2025-06-24 11:56:56'),
 (2129, 2, 2025, 4, 1, '2025-06-24 11:56:56'),
 (2130, 3, 2025, 4, 2, '2025-06-24 11:56:56'),
 (2131, 4, 2025, 4, 5, '2025-06-24 11:56:56'),
@@ -1015,11 +1021,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2169, 54, 2025, 4, 13, '2025-06-24 11:56:56'),
 (2170, 55, 2025, 4, 8, '2025-06-24 11:56:56'),
 (2171, 56, 2025, 4, 6, '2025-06-24 11:56:56'),
-(2172, 57, 2025, 4, 6, '2025-06-24 11:56:56'),
 (2173, 559, 2025, 4, 9, '2025-06-24 11:56:56'),
 (2174, 561, 2025, 4, 6, '2025-06-24 11:56:56'),
 (2175, 562, 2025, 4, 6, '2025-06-24 11:56:56'),
-(2176, 563, 2025, 4, 5, '2025-06-24 11:56:56'),
 (2178, 2, 2025, 5, 1, '2025-06-24 11:56:56'),
 (2179, 3, 2025, 5, 2, '2025-06-24 11:56:56'),
 (2180, 4, 2025, 5, 3, '2025-06-24 11:56:56'),
@@ -1062,11 +1066,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2218, 54, 2025, 5, 12, '2025-06-24 11:56:56'),
 (2219, 55, 2025, 5, 5, '2025-06-24 11:56:56'),
 (2220, 56, 2025, 5, 3, '2025-06-24 11:56:56'),
-(2221, 57, 2025, 5, 9, '2025-06-24 11:56:56'),
 (2222, 559, 2025, 5, 8, '2025-06-24 11:56:56'),
 (2223, 561, 2025, 5, 5, '2025-06-24 11:56:56'),
 (2224, 562, 2025, 5, 7, '2025-06-24 11:56:56'),
-(2225, 563, 2025, 5, 4, '2025-06-24 11:56:56'),
 (2227, 2, 2025, 6, 2, '2025-06-24 11:56:56'),
 (2228, 3, 2025, 6, 2, '2025-06-24 11:56:56'),
 (2229, 4, 2025, 6, 4, '2025-06-24 11:56:56'),
@@ -1109,11 +1111,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2267, 54, 2025, 6, 10, '2025-06-24 11:56:56'),
 (2268, 55, 2025, 6, 6, '2025-06-24 11:56:56'),
 (2269, 56, 2025, 6, 3, '2025-06-24 11:56:56'),
-(2270, 57, 2025, 6, 6, '2025-06-24 11:56:56'),
 (2271, 559, 2025, 6, 7, '2025-06-24 11:56:56'),
 (2272, 561, 2025, 6, 6, '2025-06-24 11:56:56'),
 (2273, 562, 2025, 6, 5, '2025-06-24 11:56:56'),
-(2274, 563, 2025, 6, 4, '2025-06-24 11:56:56'),
 (2276, 2, 2025, 7, 3, '2025-06-24 11:56:56'),
 (2277, 3, 2025, 7, 2, '2025-06-24 11:56:56'),
 (2278, 4, 2025, 7, 5, '2025-06-24 11:56:56'),
@@ -1156,11 +1156,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2316, 54, 2025, 7, 13, '2025-06-24 11:56:56'),
 (2317, 55, 2025, 7, 7, '2025-06-24 11:56:56'),
 (2318, 56, 2025, 7, 4, '2025-06-24 11:56:56'),
-(2319, 57, 2025, 7, 5, '2025-06-24 11:56:56'),
 (2320, 559, 2025, 7, 10, '2025-06-24 11:56:56'),
 (2321, 561, 2025, 7, 8, '2025-06-24 11:56:56'),
 (2322, 562, 2025, 7, 7, '2025-06-24 11:56:56'),
-(2323, 563, 2025, 7, 4, '2025-06-24 11:56:56'),
 (2325, 2, 2025, 8, 2, '2025-06-24 11:56:56'),
 (2326, 3, 2025, 8, 2, '2025-06-24 11:56:56'),
 (2327, 4, 2025, 8, 2, '2025-06-24 11:56:56'),
@@ -1203,11 +1201,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2365, 54, 2025, 8, 10, '2025-06-24 11:56:56'),
 (2366, 55, 2025, 8, 6, '2025-06-24 11:56:56'),
 (2367, 56, 2025, 8, 6, '2025-06-24 11:56:56'),
-(2368, 57, 2025, 8, 7, '2025-06-24 11:56:56'),
 (2369, 559, 2025, 8, 5, '2025-06-24 11:56:56'),
 (2370, 561, 2025, 8, 5, '2025-06-24 11:56:56'),
 (2371, 562, 2025, 8, 4, '2025-06-24 11:56:56'),
-(2372, 563, 2025, 8, 3, '2025-06-24 11:56:56'),
 (2374, 2, 2025, 9, 2, '2025-06-24 11:56:56'),
 (2375, 3, 2025, 9, 2, '2025-06-24 11:56:56'),
 (2376, 4, 2025, 9, 2, '2025-06-24 11:56:56'),
@@ -1250,11 +1246,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2414, 54, 2025, 9, 15, '2025-06-24 11:56:56'),
 (2415, 55, 2025, 9, 7, '2025-06-24 11:56:56'),
 (2416, 56, 2025, 9, 4, '2025-06-24 11:56:56'),
-(2417, 57, 2025, 9, 6, '2025-06-24 11:56:56'),
 (2418, 559, 2025, 9, 8, '2025-06-24 11:56:56'),
 (2419, 561, 2025, 9, 6, '2025-06-24 11:56:56'),
 (2420, 562, 2025, 9, 6, '2025-06-24 11:56:56'),
-(2421, 563, 2025, 9, 6, '2025-06-24 11:56:56'),
 (2423, 2, 2025, 10, 1, '2025-06-24 11:56:56'),
 (2424, 3, 2025, 10, 1, '2025-06-24 11:56:56'),
 (2425, 4, 2025, 10, 4, '2025-06-24 11:56:56'),
@@ -1297,11 +1291,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2463, 54, 2025, 10, 14, '2025-06-24 11:56:56'),
 (2464, 55, 2025, 10, 6, '2025-06-24 11:56:56'),
 (2465, 56, 2025, 10, 3, '2025-06-24 11:56:56'),
-(2466, 57, 2025, 10, 9, '2025-06-24 11:56:56'),
 (2467, 559, 2025, 10, 10, '2025-06-24 11:56:56'),
 (2468, 561, 2025, 10, 8, '2025-06-24 11:56:56'),
 (2469, 562, 2025, 10, 7, '2025-06-24 11:56:56'),
-(2470, 563, 2025, 10, 3, '2025-06-24 11:56:56'),
 (2472, 2, 2025, 11, 1, '2025-06-24 11:56:56'),
 (2473, 3, 2025, 11, 1, '2025-06-24 11:56:56'),
 (2474, 4, 2025, 11, 5, '2025-06-24 11:56:56'),
@@ -1344,11 +1336,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2512, 54, 2025, 11, 10, '2025-06-24 11:56:56'),
 (2513, 55, 2025, 11, 8, '2025-06-24 11:56:56'),
 (2514, 56, 2025, 11, 5, '2025-06-24 11:56:56'),
-(2515, 57, 2025, 11, 8, '2025-06-24 11:56:56'),
 (2516, 559, 2025, 11, 9, '2025-06-24 11:56:56'),
 (2517, 561, 2025, 11, 7, '2025-06-24 11:56:56'),
 (2518, 562, 2025, 11, 6, '2025-06-24 11:56:56'),
-(2519, 563, 2025, 11, 5, '2025-06-24 11:56:56'),
 (2521, 2, 2025, 12, 3, '2025-06-24 11:56:56'),
 (2522, 3, 2025, 12, 2, '2025-06-24 11:56:56'),
 (2523, 4, 2025, 12, 5, '2025-06-24 11:56:56'),
@@ -1370,8 +1360,7 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2539, 32, 2025, 12, 3, '2025-06-24 11:56:56'),
 (2540, 33, 2025, 12, 3, '2025-06-24 11:56:56'),
 (2541, 34, 2025, 12, 4, '2025-06-24 11:56:56'),
-(2542, 35, 2025, 12, 4, '2025-06-24 11:56:56');
-INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units_sold`, `created_at`) VALUES
+(2542, 35, 2025, 12, 4, '2025-06-24 11:56:56'),
 (2543, 36, 2025, 12, 6, '2025-06-24 11:56:56'),
 (2544, 37, 2025, 12, 6, '2025-06-24 11:56:56'),
 (2545, 38, 2025, 12, 4, '2025-06-24 11:56:56'),
@@ -1392,11 +1381,9 @@ INSERT INTO `product_sales_history` (`id`, `product_id`, `year`, `month`, `units
 (2561, 54, 2025, 12, 10, '2025-06-24 11:56:56'),
 (2562, 55, 2025, 12, 4, '2025-06-24 11:56:56'),
 (2563, 56, 2025, 12, 6, '2025-06-24 11:56:56'),
-(2564, 57, 2025, 12, 9, '2025-06-24 11:56:56'),
 (2565, 559, 2025, 12, 9, '2025-06-24 11:56:56'),
 (2566, 561, 2025, 12, 6, '2025-06-24 11:56:56'),
-(2567, 562, 2025, 12, 4, '2025-06-24 11:56:56'),
-(2568, 563, 2025, 12, 3, '2025-06-24 11:56:56');
+(2567, 562, 2025, 12, 4, '2025-06-24 11:56:56');
 
 -- --------------------------------------------------------
 
@@ -1417,11 +1404,20 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `created_at`, `role`) VALUES
-(1, 'admin@atelien.com', '$2a$10$7gEOpRuo6JQys3qmSrNnouLJ0DHs3OxBDNer72xy4QgzWdmUuvSWe', '2025-06-21 14:51:23', 'admin');
+(1, 'admin@atelien.com', '$2a$10$7gEOpRuo6JQys3qmSrNnouLJ0DHs3OxBDNer72xy4QgzWdmUuvSWe', '2025-06-21 14:51:23', 'admin'),
+(13, 'user@atelien.com', '$2a$10$Rrpgc9.oMb3L4dFg7YbK5Oc6RZLnqKyo1teg6SR66CSUlg2GeC3B.', '2025-06-25 12:24:42', 'user'),
+(17, 'asdsd@sd.com', '$2a$10$ppHRn76jhLC9OCzLb.ixcO/bNjd/SPji6iGItCdn9NLVFObMzkolm', '2025-06-25 15:45:30', 'user'),
+(18, 'wuttikan_s@cmu.ac.th', '$2a$10$WityyDo4r4O4Ex3t5.i2HO0RsEzv3cqaolhEg6F6nynP1U4/d2FM.', '2025-06-25 20:15:47', 'user');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `contact_us`
+--
+ALTER TABLE `contact_us`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `discount_coupons`
@@ -1473,10 +1469,16 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `contact_us`
+--
+ALTER TABLE `contact_us`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
 -- AUTO_INCREMENT for table `discount_coupons`
 --
 ALTER TABLE `discount_coupons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `monthly_stats`
@@ -1488,13 +1490,13 @@ ALTER TABLE `monthly_stats`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=568;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=570;
 
 --
 -- AUTO_INCREMENT for table `product_sales_history`
@@ -1506,7 +1508,7 @@ ALTER TABLE `product_sales_history`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables
