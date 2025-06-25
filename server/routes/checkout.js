@@ -36,8 +36,8 @@ router.post('/', requireAuth, (req, res) => {
     const orderData = {
         userId: req.user.id,
         status: 'pending',
-        // Combine shipping fields into a single address string
-        shipping: `${shipping.address}${shipping.apartment ? ' ' + shipping.apartment : ''}\n${shipping.company ? shipping.company + '\n' : ''}${shipping.city} ${shipping.state} ${shipping.zip}\n${shipping.country}`,
+        // Store shipping as JSON string
+        shipping: JSON.stringify(shipping),
         shippingMethod,
         discountCode: discountCode || null,
         discountAmount: discountAmount || 0,
@@ -45,24 +45,16 @@ router.post('/', requireAuth, (req, res) => {
         shippingCost,
         taxes,
         total,
-        // Only keep product IDs as a comma-separated string
-        items: cartItems.map(item => item.id).join(','),
+        // Store full cartItems as JSON string
+        items: JSON.stringify(cartItems),
         createdAt: new Date()
     };
 
     // Insert order into database
-    const orderQuery = `
-        INSERT INTO orders (
-            user_id, status, shipping_info, shipping_method, 
-            discount_code, discount_amount, subtotal, shipping_cost, 
-            taxes, total, items, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
     const orderValues = [
         orderData.userId,
         orderData.status,
-        orderData.shipping, // now a plain string
+        orderData.shipping, // now a JSON string
         orderData.shippingMethod,
         orderData.discountCode,
         orderData.discountAmount,
@@ -70,9 +62,18 @@ router.post('/', requireAuth, (req, res) => {
         orderData.shippingCost,
         orderData.taxes,
         orderData.total,
-        orderData.items, // now a comma-separated string of product IDs
+        orderData.items, // now a JSON string
         orderData.createdAt
     ];
+
+    console.log('Order values to insert:', orderValues); // DEBUG LOG
+    const orderQuery = `
+        INSERT INTO orders (
+            user_id, status, shipping_info, shipping_method, 
+            discount_code, discount_amount, subtotal, shipping_cost, 
+            taxes, total, items, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
     // Use callback API instead of promise API
     db.query(orderQuery, orderValues, (error, results) => {

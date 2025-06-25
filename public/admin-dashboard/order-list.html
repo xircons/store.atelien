@@ -20,18 +20,21 @@
       }
       .product-row .product-item {
         display: grid !important;
-        grid-template-columns: 60px 1fr 1fr 2fr 160px 160px !important;
+        grid-template-columns: minmax(50px, 60px) minmax(50px, 60px) 2.5fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr !important;
         align-items: start;
         justify-items: start;
         color: rgba(6, 29, 27, 0.8);
         font-size: 0.9rem;
-        gap: 2rem;
+        gap: 1.2rem;
       }
       .product-items-header {
         display: grid;
-        grid-template-columns: 60px 1fr 1fr 2fr 160px 160px;
+        grid-template-columns: minmax(50px, 60px) minmax(50px, 60px) 2.5fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr !important;
         align-items: center;
-        gap: 2rem;
+        gap: 1.2rem;
+      }
+      .header-info, .header-total, .header-created {
+        text-align: left;
       }
       .header-status {
         text-align: center;
@@ -52,6 +55,9 @@
       }
       .dot-green {
         background-color: #22c55e !important;
+      }
+      .dot-yellow {
+        background-color: #eab308 !important;
       }
       .status-container {
         display: flex;
@@ -108,6 +114,10 @@
         color: #22c55e;
         transition: color 0.2s;
       }
+      .status-select.status-select-yellow {
+        color: #eab308;
+        transition: color 0.2s;
+      }
       .status-select.dropdown-open {
         min-width: 120px !important;
       }
@@ -119,7 +129,7 @@
         flex-shrink: 0;
         margin: 0;
       }
-      .contact-alert {
+      .order-alert {
         position: fixed;
         bottom: 2rem;
         right: 2rem;
@@ -133,22 +143,22 @@
         transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s;
         max-width: 300px;
       }
-      .contact-alert.show {
+      .order-alert.show {
         transform: translateX(0);
         opacity: 1;
         visibility: visible;
       }
-      .contact-alert .alert-content {
+      .order-alert .alert-content {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
       }
-      .contact-alert .alert-message {
+      .order-alert .alert-message {
         font-size: 0.8rem;
         font-weight: 400;
       }
-      .contact-alert .alert-close {
+      .order-alert .alert-close {
         background: none;
         border: none;
         color: white;
@@ -157,8 +167,32 @@
         padding: 0;
         line-height: 1;
       }
-      .contact-alert .alert-close:hover {
+      .order-alert .alert-close:hover {
         opacity: 0.8;
+      }
+      .total-amount {
+        font-weight: 600;
+        color: #2a2a2a;
+      }
+      @media (max-width: 900px) {
+        .product-row .product-item,
+        .product-items-header {
+          grid-template-columns: 1fr 1fr 2fr 1.5fr 1fr;
+          font-size: 0.92rem;
+          gap: 0.7rem;
+        }
+      }
+      @media (max-width: 600px) {
+        .product-row .product-item,
+        .product-items-header {
+          display: flex !important;
+          flex-direction: column;
+          align-items: flex-start;
+          min-width: 320px;
+          width: 100%;
+          font-size: 0.9rem;
+          gap: 0.5rem;
+        }
       }
     </style>
 </head>
@@ -171,32 +205,34 @@
     });
     </script>
     <script src="js/sidebar-active.js"></script>
-    <main class="main-content contact-list-page">
+    <main class="main-content order-list-page">
         <div class="product-container">
             <div class="product-header">
-                <h2>Contact Messages</h2>
+                <h2>Order List</h2>
             </div>
             <div class="product-items-section">
                 <div class="product-items-header">
                     <span class="header-product">ID</span>
-                    <span class="header-price">Name</span>
-                    <span class="header-category">Email</span>
-                    <span class="header-message">Message</span>
-                    <span class="header-submitted">Submitted</span>
+                    <span class="header-price">User ID</span>
+                    <span class="header-info">Customer Name</span>
+                    <span class="header-submitted">Shipping Method</span>
+                    <span class="header-total">Total</span>
+                    <span class="header-created">Created At</span>
                     <span class="header-status">Status</span>
+                    <span class="header-status">Delivery Status</span>
                 </div>
-                <div class="product-items" id="contactItems">
-                    <!-- Contact rows will be rendered here by contact-list.js -->
+                <div class="product-items" id="orderItems">
+                    <!-- Order rows will be rendered here by order-list.js -->
                 </div>
             </div>
         </div>
     </main>
-    <div class="contact-alert" id="contactAlert">
+    <div class="order-alert" id="orderAlert">
       <div class="alert-content">
-        <span class="alert-message" id="contactAlertMessage"></span>
-        <button class="alert-close" id="contactAlertClose">×</button>
+        <span class="alert-message" id="orderAlertMessage"></span>
+        <button class="alert-close" id="orderAlertClose">×</button>
       </div>
     </div>
-    <script src="js/contact-list.js"></script>
+    <script src="js/order-list.js"></script>
 </body>
 </html> 

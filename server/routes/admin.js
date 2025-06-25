@@ -9,9 +9,40 @@ const XLSX = require('xlsx');
 
 // --- Orders Management ---
 router.get('/orders', (req, res) => {
-    db.query('SELECT * FROM orders', (err, results) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-        res.json(results);
+    const query = `
+        SELECT 
+            id, 
+            user_id, 
+            JSON_UNQUOTE(JSON_EXTRACT(shipping_info, '$.firstName')) as firstname,
+            JSON_UNQUOTE(JSON_EXTRACT(shipping_info, '$.lastName')) as lastname,
+            shipping_method, 
+            total, 
+            created_at, 
+            status,
+            COALESCE(status_delivery, 'pending') as status_delivery
+        FROM orders 
+        ORDER BY created_at DESC
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, error: 'Database error' });
+        }
+        
+        // Format the results to include customer name
+        const formattedOrders = results.map(order => ({
+            id: order.id,
+            user_id: order.user_id,
+            shipping_info: `${order.firstname || ''} ${order.lastname || ''}`.trim(),
+            shipping_method: order.shipping_method,
+            total: order.total,
+            created_at: order.created_at,
+            status: order.status,
+            status_delivery: order.status_delivery
+        }));
+        
+        res.json({ success: true, orders: formattedOrders });
     });
 });
 
@@ -19,6 +50,29 @@ router.put('/orders/:id', (req, res) => {
     const { status } = req.body;
     db.query('UPDATE orders SET status = ? WHERE id = ?', [status, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: 'Database error' });
+        res.json({ success: true });
+    });
+});
+
+// Add endpoints for updating order status and delivery status
+router.post('/update-order-status', (req, res) => {
+    const { orderId, status } = req.body;
+    db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId], (err, result) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, error: 'Database error' });
+        }
+        res.json({ success: true });
+    });
+});
+
+router.post('/update-order-delivery', (req, res) => {
+    const { orderId, status_delivery } = req.body;
+    db.query('UPDATE orders SET status_delivery = ? WHERE id = ?', [status_delivery, orderId], (err, result) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, error: 'Database error' });
+        }
         res.json({ success: true });
     });
 });
