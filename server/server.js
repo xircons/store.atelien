@@ -8,28 +8,14 @@ const db = require('./models/db');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../public')));
 
-// CORS middleware for production
+// CORS middleware
 app.use((req, res, next) => {
-    // Allow requests from Railway domain and localhost for development
-    const allowedOrigins = [
-        'https://your-app-name.railway.app',
-        'http://localhost:3000',
-        'http://localhost:5000'
-    ];
-    
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    }
-    
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    
+    res.header('Access-Control-Allow-Credentials', 'true'); // Allow cookies in CORS
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
     } else {
@@ -56,19 +42,8 @@ app.use('/api/discounts', discountRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/log', logRoutes);
 
-// Serve React app for any non-API routes (SPA routing)
-app.get('*', (req, res) => {
-    // Don't serve index.html for API routes
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-    console.log(`📱 Frontend available at: http://localhost:${PORT}`);
-    console.log(`🔧 API available at: http://localhost:${PORT}/api`);
+app.listen(PORT, () => {
+    console.log(`🚀 Server is running at http://localhost:${PORT}`);
 });
