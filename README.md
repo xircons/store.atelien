@@ -1,20 +1,59 @@
-# E-Commerce Project
+# store.atelien
 
-This is a university project created for educational and presentation purposes only.  
-It showcases a conceptual e-commerce website design and functionality.
+## Demo
 
-## 🔖 Purpose
-- Built for a university course presentation.
-- Demonstrates frontend design, product listing, and user interface skills.
-- Not intended for commercial use or public deployment.
+![User Demo](public/images/demo_user.jpg)
+![Admin Dashboard Demo](public/images/demo_admin.jpg)
 
-## 📷 Image Credits
+## Tech Stack
+
+### Frontend
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
+
+### Backend
+- Node.js
+- Express.js
+- MySQL2
+- bcryptjs
+- jsonwebtoken
+- cookie-parser
+- xlsx
+- nodemon
+
+### Database
+- MySQL
+
+---
+
+## Installation & Usage
+
+### 1. Clone the Repository
+
+#### macOS/Linux
+```bash
+sudo git clone https://github.com/xircons/store.atelien.git
+```
+#### Windows
+```bash 
+git clone https://github.com/xircons/store.atelien.git
+```
+
+### 2.  Setup Backend
+```bash 
+cd server && npm start
+```
+
+---
+
+## Image Credits
 
 All product images used in this project are from [https://store.leibal.com](https://store.leibal.com).  
 They are used **strictly for academic and non-commercial purposes only**.  
 **All image rights belong to Leibal and the original creators.**
 
-## ⚠️ Disclaimer
+## ! Disclaimer
 
 > This project is a student work made for educational demonstration only.  
 > It does not represent a real business, and no part of it should be interpreted as such.  
