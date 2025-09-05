@@ -2,8 +2,8 @@
 
 ## Demo
 
-![User Demo](public\images\store.atelien-user.png)
-![Admin Dashboard Demo](public\images\store.atelien-admin.png)
+![User Demo](public/images/demo_user.jpg)
+![Admin Dashboard Demo](public/images/demo_admin.jpg)
 
 ## Tech Stack
 
